@@ -673,7 +673,8 @@ function boardHtml(){
   const tabs=`<div class="tabs"><button type="button" class="tab${SCOPE==="global"?" on":""}" data-sc="global">🌍 Everyone</button>${LEAGUES.map(l=>`<button type="button" class="tab${SCOPE===l.id?" on":""}" data-sc="${l.id}">${esc(l.name)}</button>`).join("")}${signedIn()?`<button type="button" class="tab add" id="lgadd">+ League</button>`:""}</div>`;
   let h=`<div class="eyebrow" style="margin:0 0 6px">🏆 Leaderboard</div>${tabs}`;
   if(boardMsg)h+=`<p class="rule" style="margin:6px 0">${boardMsg}</p>`;
-  if(!signedIn())h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">Sign in with Google to get on the leaderboard and play in leagues with your friends.</p><button type="button" class="gbtn" id="gsign">${GICON} Continue with Google</button></div>`;
+  if(ME&&!PROFILE)h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">✅ Signed in as <b>${esc(ME.email||"Google user")}</b>. Pick the name other players will see:</p><div class="row" style="justify-content:flex-start;gap:8px;margin:0"><input id="bname" maxlength="24" placeholder="Your name" style="flex:1;min-width:0"><button type="button" id="bnameok">Save</button></div><div class="merr" id="bnerr"></div></div>`;
+  else if(!signedIn())h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">Sign in with Google to get on the leaderboard and play in leagues with your friends.</p><button type="button" class="gbtn" id="gsign">${GICON} Continue with Google</button></div>`;
   if(dbState==="none")return h+`<p class="rule" style="margin:6px 0 0">The leaderboard is offline right now.</p>`;
   const lg=SCOPE==="global"?null:LEAGUES.find(l=>l.id===SCOPE),mem=lg&&MEMBERS[lg.id],inScope=id=>!lg||(mem&&mem.has(id));
   const meId=ME&&ME.id;
@@ -692,6 +693,7 @@ function renderBoard(){
   const el=document.getElementById("boardcard");if(!el)return;el.hidden=false;el.innerHTML=boardHtml();
   el.querySelectorAll(".tab[data-sc]").forEach(b=>b.onclick=()=>{SCOPE=b.dataset.sc;store.set("rtf_scope",SCOPE);boardMsg="";loadBoard();renderBoard();});
   const g=el.querySelector("#gsign");if(g)g.onclick=signIn;
+  const bn=el.querySelector("#bnameok");if(bn){const inp=el.querySelector("#bname");const go=async()=>{const e=await saveName(inp.value);if(e){el.querySelector("#bnerr").textContent=e;return;}renderMe();loadBoard();};bn.onclick=go;inp.addEventListener("keydown",e=>{if(e.key==="Enter")go();});}
   const add=el.querySelector("#lgadd");if(add)add.onclick=leagueForm;
   const cp=el.querySelector("#lgcopy");if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(cp.dataset.l);cp.textContent="Link copied ✓";}catch(e){prompt("Copy this link:",cp.dataset.l);}};
   const lv=el.querySelector("#lgleave");if(lv)lv.onclick=async()=>{if(!confirmLeave(lv))return;await sb.from("league_members").delete().eq("league_id",SCOPE).eq("user_id",ME.id);await loadLeagues();SCOPE="global";store.set("rtf_scope",SCOPE);boardMsg="You left the league.";loadBoard();};
@@ -718,6 +720,7 @@ function renderMe(){
   let el=document.getElementById("mechip");
   if(!el){el=document.createElement("span");el.id="mechip";const hd=document.querySelector("header");if(!hd)return;hd.appendChild(el);}
   if(signedIn())el.innerHTML=`<span class="who">👤 ${esc(PROFILE.name)}</span><button type="button" class="ghost" id="mename">Change name</button><button type="button" class="ghost" id="meout">Sign out</button>`;
+  else if(ME)el.innerHTML=`<span class="who">👤 ${esc(ME.email||"")}</span><button type="button" class="ghost" id="meout">Sign out</button>`;
   else if(sb&&dbState==="ok")el.innerHTML=`<button type="button" class="gbtn sm" id="mein">${GICON} Sign in</button>`;
   else el.innerHTML="";
   const a=document.getElementById("mename"),o=document.getElementById("meout"),i=document.getElementById("mein");
