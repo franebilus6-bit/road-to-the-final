@@ -854,7 +854,7 @@ function renderMe(){
 }
 READY.then(()=>{renderMe();if(document.body.classList.contains("done"))loadBoard();setInterval(()=>{if(!document.hidden&&document.body.classList.contains("done"))loadBoard();},30000);});
 
-function renderStats(){const el=document.getElementById("statscard");if(el)el.innerHTML=histHtml();}
+function renderStats(){const el=document.getElementById("statscard");if(el)el.innerHTML="";}
 function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort();if(!ks.length)return "";
   const km=ks.map(k=>h[k].km||0),best=Math.max(...km),avg=Math.round(km.reduce((a,b)=>a+b,0)/km.length),fin=km.filter(x=>x>=FINISH).length;
   let streak=0;{const d=new Date();if(!h[todayKey()])d.setDate(d.getDate()-1);for(;;){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!h[k])break;streak++;d.setDate(d.getDate()-1);}}
