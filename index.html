@@ -152,7 +152,13 @@ header h1 span{color:#ffd60a}
 header .tag{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45)}
 header button.ghost{background:#fff}
 #splash{background:radial-gradient(circle at 50% 50vh,transparent 0 118px,rgba(255,255,255,.55) 119px 122px,transparent 123px),linear-gradient(90deg,transparent calc(50% - 1.5px),rgba(255,255,255,.55) calc(50% - 1.5px) calc(50% + 1.5px),transparent calc(50% + 1.5px)),repeating-linear-gradient(90deg,#2e8b3a 0 70px,#36993f 70px 140px)!important}
-#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}body:not(.done) #boardcard{display:none!important}body.playing main details{display:none}.mystats{margin-top:14px;border:2px solid var(--ink);border-radius:10px;padding:12px 14px;background:#fff}
+#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}body:not(.done) #boardcard{display:none!important}body.playing main details{display:none}.leftcol{display:flex;flex-direction:column;gap:16px;min-width:0}body.playing #statscard{display:none}#statscard:empty{display:none}@media (max-width:880px){.leftcol{display:contents}.mapcard{order:1}.panel{order:2}#statscard{order:3}
+ .plus{white-space:nowrap}
+ body.playing header .tag{display:none}body.playing header h1{font-size:26px}
+ body.playing .mapcard{position:sticky;top:0;z-index:5}body.playing #map{height:30vh}
+ body.playing .score .km{font-size:28px}body.playing .score .where b{font-size:15px}}
+@media (max-width:520px){.sts{grid-template-columns:repeat(5,1fr)!important;gap:4px}.st b{font-size:17px}.st small{font-size:9px;letter-spacing:0}}
+.mystats{border:2px solid var(--ink);border-radius:10px;padding:12px 14px;background:#fff}
 .sts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .st{background:var(--paper);border-radius:8px;padding:8px 4px;text-align:center}
 .st b{display:block;font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.05}
@@ -176,6 +182,7 @@ header button.ghost{background:#fff}
   <span class="sets" role="group" aria-label="Question sets"><button type="button" class="ghost" data-s="0">Set 1</button><button type="button" class="ghost" data-s="1">Set 2</button><button type="button" class="ghost" data-s="2">Set 3</button></span>
 </header>
 <main>
+  <div class="leftcol">
   <section class="mapcard" aria-label="Route map from London to the Champions League final in Madrid">
     <svg id="map" viewBox="0 15 700 655" role="img" aria-label="Map of Europe with the grounds on the route"></svg>
     <button type="button" class="follow" id="follow">Whole map</button>
@@ -185,6 +192,8 @@ header button.ghost{background:#fff}
       <div class="where"><b id="where">Emirates Stadium, London</b><span id="next">Next ground in 460 km</span></div>
     </div>
   </section>
+  <div id="statscard"></div>
+  </div>
   <section class="panel">
     <div class="card" id="stage" aria-live="polite"></div>
     <div class="card" id="boardcard" hidden></div>
@@ -529,6 +538,7 @@ function lock(name,label,why){
   go.onclick=nxt;autoNext=setTimeout(nxt,ok&&TIERS.indexOf(tr)===6?3200:2400);
 }
 function finish(){
+  setTimeout(renderStats,0);
   clearTimeout(autoNext);document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   const wasRanked=ranked;if(ranked){saveRanked(true);ranked=false;}
   const r=reached(total),t=ST[r],done=total>=FINISH;
@@ -536,7 +546,7 @@ function finish(){
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
   <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
-  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>${histHtml()}`;
+  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
   renderBoard();
     document.getElementById("bestbtn").onclick=()=>best();
   document.getElementById("copy").onclick=async()=>{const m=document.getElementById("msg");try{await navigator.clipboard.writeText(line);m.textContent="Copied: "+line;}catch(e){m.textContent=line;}};
@@ -621,6 +631,7 @@ function renderBoard(){
   setInterval(()=>{if(!document.hidden)load();},30000);
   const p0=pushScore;pushScore=function(){p0();dbWrite.then(()=>setTimeout(load,400));};
 })();
+function renderStats(){const el=document.getElementById("statscard");if(el)el.innerHTML=histHtml();}
 function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort();if(!ks.length)return "";
   const km=ks.map(k=>h[k].km||0),best=Math.max(...km),avg=Math.round(km.reduce((a,b)=>a+b,0)/km.length),fin=km.filter(x=>x>=FINISH).length;
   let streak=0;{const d=new Date();if(!h[todayKey()])d.setDate(d.getDate()-1);for(;;){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!h[k])break;streak++;d.setDate(d.getDate()-1);}}
@@ -632,6 +643,7 @@ function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort();if
 function untilMidnight(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1);const mins=Math.max(0,Math.round((m-n)/6e4));return Math.floor(mins/60)+" h "+(mins%60)+" min";}
 let cdTimer=0;
 function resultView(h){
+  setTimeout(renderStats,0);
   document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   clearInterval(cdTimer);
   const d=new Date(),done=h.km>=FINISH,r=reached(h.km),t=ST[r];
@@ -639,13 +651,14 @@ function resultView(h){
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
   ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
   <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. One attempt per day. Come back tomorrow for a new set!</p>
-  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>${histHtml()}`;
+  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>`;
   cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
   h.key=todayKey();
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
   travel(h.km,0);renderBoard();
 }
 function intro(){
+  setTimeout(renderStats,0);
   document.body.classList.toggle("playing",false);document.body.classList.toggle("done",false);
   {const all=store.get("rtf_hist",{}),hh=all[todayKey()];if(hh){if(!hh.done){hh.done=true;store.set("rtf_hist",all);pushScore();}pickDaily();resultView(hh);return;}}
   pickDaily();
@@ -653,7 +666,7 @@ function intro(){
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}.</div><h2>Eight questions to the final</h2>
   <p class="rule">A new set every day at midnight. You get <b>one attempt</b> per day, so make it count.</p>
   ${h?`<p class="rule"><b>Today's saved result: ${h.km} km${h.done?"":" (unfinished)"}.</b> This run is practice and won't be saved.</p>`:""}
-  <div class="row"><span></span><button type="button" id="start">${h?"Practice":"Start"}</button></div>${histHtml()}`;
+  <div class="row"><span></span><button type="button" id="start">${h?"Practice":"Start"}</button></div>`;
   renderBoard();
   const b=document.getElementById("start");
   if(!nick()&&SDB){b.disabled=true;b.title="Pick a nickname in the leaderboard first";}
