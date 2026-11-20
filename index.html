@@ -164,7 +164,7 @@ header h1 span{color:#ffd60a}
 header .tag{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45)}
 header button.ghost{background:#fff}
 #splash{background:radial-gradient(circle at 50% 50vh,transparent 0 118px,rgba(255,255,255,.55) 119px 122px,transparent 123px),linear-gradient(90deg,transparent calc(50% - 1.5px),rgba(255,255,255,.55) calc(50% - 1.5px) calc(50% + 1.5px),transparent calc(50% + 1.5px)),repeating-linear-gradient(90deg,#2e8b3a 0 70px,#36993f 70px 140px)!important}
-#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}body:not(.done) #boardcard{display:none!important}body.playing main details{display:none}.leftcol{display:flex;flex-direction:column;gap:16px;min-width:0}body.playing #statscard{display:none}#statscard:empty{display:none}@media (max-width:880px){.leftcol{display:contents}.mapcard{order:1}.panel{order:2}#statscard{order:3}
+#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}body:not(.done) #boardcard{display:none!important}body.playing main details,body.playing .howcard{display:none}.leftcol{display:flex;flex-direction:column;gap:16px;min-width:0}body.playing #statscard{display:none}#statscard:empty{display:none}@media (max-width:880px){.leftcol{display:contents}.mapcard{order:1}.panel{order:2}#statscard{order:3}.howcard{order:4}
  .plus{white-space:nowrap}
  body.playing header .tag{display:none}body.playing header h1{font-size:26px}
  body.playing .mapcard{position:sticky;top:0;z-index:5}body.playing #map{height:30vh}
@@ -214,7 +214,7 @@ body.playing #mechip{display:none}
 .lgitem .code{font-family:monospace;letter-spacing:2px;background:var(--paper);padding:1px 6px;border-radius:4px;font-size:13px}
 .lgitem button{font-size:13px;padding:5px 10px}
 .pastt tr{cursor:pointer}.pastt tr:hover{background:rgba(46,139,58,.1)}
-</style>
+.howcard{padding:0!important;border:none!important;background:none!important;box-shadow:none!important}.howcard details{background:var(--paper)}</style>
 </head>
 <body>
 <div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:#ffd60a;text-shadow:0 3px 0 #14213d,0 -2px 0 #14213d,3px 0 0 #14213d,-3px 0 0 #14213d,0 0 2px #14213d">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 football questions a day.</b> Type a correct answer to travel from London to the <b>Champions League final in Madrid</b>.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2"><b>Rarer answer = more km. Faster answer = bonus.</b> Wrong answer = 0 km. Reach Madrid and the extra kilometres keep you rolling on to Lisbon as a bonus.</p></div></div></div>
@@ -235,15 +235,18 @@ body.playing #mechip{display:none}
     </div>
   </section>
   <div id="statscard"></div>
-  </div>
-  <section class="panel">
-    <div class="card" id="stage" aria-live="polite"></div>
-    <div class="card" id="boardcard" hidden></div>
-    <details>
+  <div class="card howcard">
+    <details style="margin:0">
       <summary>How scoring works</summary>
       <table><tr><td>more than 30% of players</td><td>Scooter</td><td class="n">35 km</td></tr><tr><td>15–30%</td><td>Night bus</td><td class="n">85 km</td></tr><tr><td>8–15%</td><td>Bullet train</td><td class="n">150 km</td></tr><tr><td>4–8%</td><td>ultras' convoy</td><td class="n">240 km</td></tr><tr><td>2–4%</td><td>Budget flight</td><td class="n">340 km</td></tr><tr><td>1–2%</td><td>Private jet</td><td class="n">425 km</td></tr><tr><td>less than 1%</td><td>SIUUU launch</td><td class="n">620 km</td></tr></table>
       <p class="note">You get 5 seconds to read each question and 25 to answer. A wrong answer or running out of time scores 0 km. The road ends at the final in Madrid (3,400 km); every kilometre past it is bonus that carries you on to Benfica's Estádio da Luz in Lisbon. Rarity comes from real English Wikipedia page views over the last five years (Nov 2021 to Oct 2026): 40% from the square root of views, 60% from simulated players who answer in proportion to views. There are no real players yet.</p>
     </details>
+  </div>
+  </div>
+  <section class="panel">
+    <div class="card" id="stage" aria-live="polite"></div>
+    <div class="card" id="boardcard" hidden></div>
+
   </section>
 </main>
 <script>
