@@ -599,7 +599,10 @@ const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMo
 const dayNo=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((m-DAY0)/864e5);};
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 let ranked=false;
-function pickDaily(){const d=dayNo();CATS=(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
+/* daily sets added after launch live in the "data" branch on GitHub (sets.json, keyed by date), so a new set needs no new deploy */
+let REMOTE_SETS={};
+const SETS_READY=Promise.race([fetch("https://raw.githubusercontent.com/franebilus6-bit/road-to-the-final/data/sets.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(j=>{if(j&&typeof j==="object")REMOTE_SETS=j;}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
+function pickDaily(){const d=dayNo(),r=REMOTE_SETS[todayKey()];CATS=(Array.isArray(r)&&r.length===8&&r)||(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
 function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok}))};store.set("rtf_hist",h);pushScore();}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 /* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
@@ -785,7 +788,7 @@ function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;
 function markSet(){document.querySelectorAll(".sets button[data-s]").forEach(b=>b.classList.toggle("on",SETS[+b.dataset.s]===CATS));}
 
 document.querySelectorAll(".sets button[data-s]").forEach(b=>b.onclick=()=>{CATS=SETS[+b.dataset.s];markSet();restart();});
-drawMap();setBall(0);hud(0);pickDaily();markSet();intro();
+drawMap();setBall(0);hud(0);pickDaily();markSet();SETS_READY.then(()=>{pickDaily();markSet();intro();});
 document.getElementById("follow").onclick=function(){follow=!follow;this.textContent=follow?"Whole map":"Follow me";setBall(shown);};
 
 /* uvodni ekran: cijela Europa s prvacima i finalom, veliki START, pa zum na rutu */
@@ -819,7 +822,7 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
       const cx=c0[0]+(c1[0]-c0[0])*u,cy=c0[1]+(c1[1]-c0[1])*u,h=w*a;
       set([cx-w/2,cy-h/2,w,h]);pin.style.opacity=String(Math.max(0,1-u*1.2));{const se=document.getElementById("spsea");if(se)se.setAttribute("opacity",Math.min(1,f*1.25).toFixed(3));}
       if(f<1)requestAnimationFrame(step);
-      else{const b=document.getElementById("start");if(b)b.click();sp.style.transition="opacity .9s ease";sp.style.opacity="0";setTimeout(()=>sp.remove(),950);}};
+      else{SETS_READY.then(()=>setTimeout(()=>{const b=document.getElementById("start");if(b)b.click();},0));sp.style.transition="opacity .9s ease";sp.style.opacity="0";setTimeout(()=>sp.remove(),950);}};
     requestAnimationFrame(step);};
   document.getElementById("trow").innerHTML=TIERS.map((t,i)=>`<div class="tv"><svg viewBox="-15 -15 30 30" aria-hidden="true"><circle r="13" fill="#fff" stroke="#14213d" stroke-width="1.8"/>${i===6?`<clipPath id="rc"><circle r="12.1"/></clipPath><image href="${EIMG.ronaldo}" x="-12.1" y="-12.1" width="24.2" height="24.2" clip-path="url(#rc)" preserveAspectRatio="xMidYMid slice"/>`:VEH[i](["#c8102e","#ffffff"])}</svg><b>${t[1]} km</b><small>${t[2]}</small></div>`).join("");
 })();
