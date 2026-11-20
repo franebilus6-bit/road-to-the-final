@@ -574,9 +574,9 @@ function renderBoard(){
 }
 (async()=>{
   /* Supabase: table scores(id, secret, nick, days, updated); read through view "board", write through rpc "save_score" */
-  const URL0="__SUPABASE_URL__",KEY="__SUPABASE_ANON_KEY__";
+  const URL0="https://wrmjrtxrjterkuslwqjp.supabase.co",KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
   if(URL0.startsWith("__")){dbState="none";renderBoard();return;}
-  const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
+  const H=Object.assign({apikey:KEY,"Content-Type":"application/json"},KEY.startsWith("sb_")?{}:{Authorization:"Bearer "+KEY});
   let id=store.get("rtf_uid",""),sec=store.get("rtf_sec","");
   const rnd=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
   if(!id){id=rnd();store.set("rtf_uid",id);} if(!sec){sec=rnd();store.set("rtf_sec",sec);}
