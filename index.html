@@ -152,7 +152,7 @@ header h1 span{color:#ffd60a}
 header .tag{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45)}
 header button.ghost{background:#fff}
 #splash{background:#8fc3d6!important}
-#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}</style>
+#veh.spin{animation:vspin .3s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}body:not(.done) #boardcard{display:none!important}body.playing main details{display:none}</style>
 </head>
 <body>
 <div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox" style="margin-bottom:6px"><input id="nick0" maxlength="24" placeholder="Your nickname for the leaderboard" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 questions</b> · 5 s to read, 25 s to answer · type a <b>correct</b> answer to travel from London through the champions of Europe's top five leagues to the <b>final in Madrid</b>. Wrong or no answer = 0 km.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2">The fewer players who give your answer, the faster you travel. Answer fast for a bonus: within 3 s ×1.3, 6 s ×1.2, 10 s ×1.1; after 15 s ×0.9, after 20 s ×0.8. Most questions also hide a <b>joker</b>: a cult answer that always launches SIUUU. Past the final it is all bonus, all the way to Lisbon.</p></div></div></div>
@@ -463,12 +463,13 @@ function stopTimer(){clearInterval(tick);tick=0;}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dots(){return `<div class="dots" aria-hidden="true">${CATS.map((c,i)=>`<i class="${i<log.length?(log[i].ok?"ok":"no"):i===idx?"now":""}"></i>`).join("")}</div>`;}
 function ask(){
+  clearTimeout(autoNext);document.body.classList.toggle("playing",true);document.body.classList.toggle("done",false);
   const c=CATS[idx],t=TYPE[c.type],yr=c.type==="year";
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
   <div class="timer" id="timer"><span id="tlabel">Read</span><div class="tbar"><i id="tfill"></i></div><b id="tnum">5</b></div>
   <form id="f" autocomplete="off"><input id="answer" type="${yr?"number":"text"}" ${yr?'inputmode="numeric" min="1930" max="2026"':'autocapitalize="words" spellcheck="false"'} placeholder="${t.ph}" aria-label="${t.ph}"><button type="submit" id="send">Check</button></form>
   <div class="msg" id="msg"></div><div id="picks"></div>
-  <div class="row">${dots()}<button type="button" class="ghost" id="skip">Skip</button></div>`;
+  <div class="row"><span></span><button type="button" class="ghost" id="skip">Skip</button></div>`;
   const inp=document.getElementById("answer"),msg=document.getElementById("msg"),picks=document.getElementById("picks");
   const send=document.getElementById("send"),timer=document.getElementById("timer"),tl=document.getElementById("tlabel"),tn=document.getElementById("tnum"),tf=document.getElementById("tfill");
   inp.disabled=true;send.disabled=true;
@@ -495,6 +496,7 @@ function ask(){
 let ansStart=0,lastMult=1,lastSec=0;
 const SPEED=[[3,1.3],[6,1.2],[10,1.1],[15,1],[20,.9],[99,.8]];
 const speedMult=sec=>{for(const [t,m] of SPEED)if(sec<=t)return m;return .8;};
+let autoNext=0;
 function lock(name,label,why){
   stopTimer();
   const c=CATS[idx],ok=name!==null&&Object.prototype.hasOwnProperty.call(c.a,name);
@@ -507,13 +509,14 @@ function lock(name,label,why){
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div>
   <div class="verdict ${ok?"ok":"no"}">${ok?(isJoker(c,name)?"Correct · JOKER!":"Correct"):why==="time"?"Out of time":why==="skip"?"Skipped":"Wrong"}</div>${ok&&isJoker(c,name)?`<div class="joker">Cult pick! Joker answers always launch SIUUU, however many players give them.</div>`:""}
   <div>${name===null?"":"<b>"+esc(label)+"</b>"+(ok?"":" is not on the list.")}</div>
-  <div class="row" style="justify-content:flex-start;gap:14px;margin-top:8px"><div class="plus">+${km}<span style="font-size:22px"> km</span></div>${ok?`<span class="chip" style="background:${tr[3]}">${esc(tr[2])}</span>`:""}</div>${ok?`<div class="speed ${lastMult>1?"fast":lastMult<1?"slow":""}">${lastSec.toFixed(1)} s · ${tr[1]} km × ${lastMult.toFixed(1)}${lastMult>1?" speed bonus ⚡":lastMult<1?" too slow 🐢":""}</div>`:""}
-  <ul class="facts">${ok?`<li>About <b>${pct(sh)}</b> of players would give the same answer.</li><li>Wikipedia views, last 5 years: <b>${fmtV(c.a[name])}</b></li>`:""}<li>Most common answer: <b>${esc(top)}${c.type==="year"?".":""}</b></li><li>Correct answers in this question: <b>${Object.keys(c.a).length}</b></li></ul>
-  <div class="row">${dots()}<button type="button" id="go">${last?"End of the road":"Next"}</button></div>`;
+  <div class="row" style="justify-content:flex-start;gap:14px;margin-top:8px"><div class="plus">+${km}<span style="font-size:22px"> km</span></div>${ok?`<span class="chip" style="background:${tr[3]}">${esc(tr[2])}</span>`:""}</div>${ok&&lastMult!==1?`<div class="speed ${lastMult>1?"fast":"slow"}">${lastMult>1?"Speed bonus ⚡ ×"+lastMult.toFixed(1):"Too slow 🐢 ×"+lastMult.toFixed(1)}</div>`:""}
+  <div class="row"><span></span><button type="button" id="go">${last?"End of the road":"Next"}</button></div>`;
   const go=document.getElementById("go");go.focus({preventScroll:true});
-  go.onclick=()=>{idx++;if(idx<CATS.length)ask();else finish();};
+  const nxt=()=>{clearTimeout(autoNext);idx++;if(idx<CATS.length)ask();else finish();};
+  go.onclick=nxt;autoNext=setTimeout(nxt,ok&&TIERS.indexOf(tr)===6?3200:2400);
 }
 function finish(){
+  clearTimeout(autoNext);document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   const wasRanked=ranked;if(ranked){saveRanked(true);ranked=false;}
   const r=reached(total),t=ST[r],done=total>=FINISH;
   const line=`Road to the Final #${dayNo()+1}: ${total} km, ${done?"reached the final in Madrid"+(total>FINISH?" and "+(total-FINISH)+" km beyond":""):"stopped at "+t.n}. ${log.filter(x=>x.ok).length}/8 correct.`;
@@ -548,7 +551,7 @@ const dayNo=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.ge
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 let ranked=false;
 function pickDaily(){const d=dayNo();CATS=(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
-function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok}))};store.set("rtf_hist",h);pushScore();}
+function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok}))};store.set("rtf_hist",h);pushScore();}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 let SDB=null,UID=null,BOARD=[],canPost=true,dbWrite=Promise.resolve(),dbState="pending";
 setTimeout(()=>{if(dbState==="pending"){dbState="none";renderBoard();}},10000);
@@ -558,15 +561,26 @@ var pushScore=function(){
   const body={nick:nick().slice(0,24),days:store.get("rtf_hist",{}),updated:new Date().toISOString()};
     dbWrite=dbWrite.then(()=>SDB.doc("scores/"+UID).set(body)).catch(e=>{if(e&&e.code==="invalid_argument"){canPost=false;renderBoard();}});
 };
+function perNick(){const m={};
+  BOARD.forEach(d=>{const n=(d.nick||"?").trim(),key=n.toLowerCase();if(!m[key])m[key]={n,days:{},me:false};if(d.id===UID)m[key].me=true;
+    for(const [day,x] of Object.entries(d.days||{})){if(!x)continue;const o=m[key].days[day],ta=x.at||Infinity,tb=o?(o.at||Infinity):Infinity;
+      if(!o||ta<tb||(ta===tb&&x.km>o.km))m[key].days[day]=x;}});
+  const me=(nick()||"").trim().toLowerCase();if(m[me])m[me].me=true;return m;}
 function boardHtml(){
   if(!SDB)return `<details class="hist" open><summary>🏆 Today's leaderboard</summary><p class="rule" style="margin:6px 0 0">${dbState==="pending"?"Connecting to the leaderboard…":"The leaderboard is offline right now. Your result is kept on this device and goes up on the board when it is back."}</p></details>`;
-  const k=todayKey(),rows=BOARD.map(d=>({n:d.nick||"?",me:d.id===UID,t:(d.days||{})[k]})).filter(r=>r.t).sort((a,b)=>b.t.km-a.t.km);
+  const k=todayKey(),PN=perNick(),rows=Object.values(PN).map(p=>({n:p.n,me:p.me,t:p.days[k]})).filter(r=>r.t).sort((a,b)=>b.t.km-a.t.km);
   let h=`<details class="hist" open><summary>🏆 Today's leaderboard</summary>`;
   if(!nick())h+=`<div class="row" style="justify-content:flex-start;gap:8px;margin:6px 0"><input id="nick" maxlength="24" placeholder="Your nickname" style="flex:1;min-width:0"><button type="button" class="ghost" id="nickok">Join</button></div><p class="rule" style="margin:0">Pick a nickname to appear on the board.</p>`;
   else if(!canPost)h+=`<p class="rule" style="margin:6px 0">Your score could not be posted right now. It will retry next time you open the game.</p>`;
   {const row=(r,i)=>`<tr${r.me?' style="font-weight:700;background:rgba(255,214,10,.25)"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
   const mi=rows.findIndex(r=>r.me);
   h+=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> of ${rows.length} players today.</p>`:`<p class="rule" style="margin:6px 0 0">${rows.length} player${rows.length===1?"":"s"} today.</p>`}`:`<p class="rule" style="margin:6px 0 0">Nobody has played today yet.</p>`;}
+  {const tot={};for(const [key,p] of Object.entries(PN)){tot[key]={n:p.n,km:0,days:0};
+      Object.values(p.days).forEach(x=>{if(x&&x.km>0){tot[key].km+=x.km;tot[key].days++;}});}
+    const at=Object.entries(tot).map(([k,v])=>Object.assign({k},v)).filter(x=>x.km>0).sort((a,b)=>b.km-a.km);
+    if(at.length){const me=(nick()||"").trim().toLowerCase(),mi=at.findIndex(x=>x.k===me),md=["🥇","🥈","🥉"];
+      h+=`<div class="eyebrow" style="margin:14px 0 4px">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.k===me?' style="font-weight:700;background:rgba(255,214,10,.25)"':""}><td>${md[i]} ${esc(x.n)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>`+
+        (mi>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[mi].km.toLocaleString("en")} km</b> · <b>${mi+1}.</b> of ${at.length}</p>`:"");}}
   return h+`</details>`;
 }
 function renderBoard(){
@@ -585,7 +599,7 @@ function renderBoard(){
   SDB={doc:()=>({set:async body=>{const r=await fetch(URL0+"/rest/v1/rpc/save_score",{method:"POST",headers:H,body:JSON.stringify({p_id:id,p_secret:sec,p_nick:body.nick,p_days:body.days})});if(!r.ok)throw {code:r.status===403?"invalid_argument":"net"};}})};
   UID=id;
   const load=async()=>{try{const since=new Date(Date.now()-3*864e5).toISOString();
-    const r=await fetch(URL0+"/rest/v1/board?select=id,nick,days&updated=gte."+since+"&limit=1000",{headers:H});
+    const r=await fetch(URL0+"/rest/v1/board?select=id,nick,days&order=updated.desc&limit=2000",{headers:H});
     if(r.ok){BOARD=await r.json();dbState="ok";renderBoard();}}catch(e){}};
   dbState="ok";
   setTimeout(()=>{const st=document.getElementById("start");if(st&&!nick()){st.disabled=true;st.title="Pick a nickname first";}},0);
@@ -599,6 +613,7 @@ function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort().re
 function untilMidnight(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1);const mins=Math.max(0,Math.round((m-n)/6e4));return Math.floor(mins/60)+" h "+(mins%60)+" min";}
 let cdTimer=0;
 function resultView(h){
+  document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   clearInterval(cdTimer);
   const d=new Date(),done=h.km>=FINISH,r=reached(h.km),t=ST[r];
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}. · already played</div><h2>${done?"You reached the final today 🏆":"Today's result"}</h2>
@@ -612,6 +627,7 @@ function resultView(h){
   travel(h.km,0);renderBoard();
 }
 function intro(){
+  document.body.classList.toggle("playing",false);document.body.classList.toggle("done",false);
   {const all=store.get("rtf_hist",{}),hh=all[todayKey()];if(hh){if(!hh.done){hh.done=true;store.set("rtf_hist",all);pushScore();}pickDaily();resultView(hh);return;}}
   pickDaily();
   const h=store.get("rtf_hist",{})[todayKey()],d=new Date();
@@ -622,7 +638,7 @@ function intro(){
   renderBoard();
   const b=document.getElementById("start");
   if(!nick()&&SDB){b.disabled=true;b.title="Pick a nickname in the leaderboard first";}
-  b.onclick=()=>{if(!nick()&&SDB){const n=document.getElementById("nick");if(n)n.focus();return;}const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1};store.set("rtf_hist",all);pushScore();}ask();};
+  b.onclick=()=>{if(!nick()&&SDB){const n=document.getElementById("nick");if(n)n.focus();return;}const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1,at:Date.now()};store.set("rtf_hist",all);pushScore();}ask();};
   b.focus({preventScroll:true});
 }
 function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();travel(0,0);intro();}
