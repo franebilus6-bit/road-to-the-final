@@ -564,11 +564,19 @@ function finish(){
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
   <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
-  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
+  <div class="row"><button type="button" id="copy">Share</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
   renderBoard();
     document.getElementById("bestbtn").onclick=()=>best();
-  document.getElementById("copy").onclick=async()=>{const m=document.getElementById("msg");try{await navigator.clipboard.writeText(line);m.textContent="Copied: "+line;}catch(e){m.textContent=line;}};
+  document.getElementById("copy").onclick=e=>shareResult(shareText(total,log.filter(x=>x.ok).length,log.map(x=>x.km)),e.currentTarget);
 }
+function shareText(km,correct,list){
+  const em=k=>k<=0?"❌":k<=50?"🛵":k<=110?"🚌":k<=190?"🚄":k<=300?"🚩":k<=440?"🛫":k<=550?"🛩️":"🚀";
+  const lg=typeof SCOPE!=="undefined"&&SCOPE!=="global"&&typeof LEAGUES!=="undefined"?LEAGUES.find(l=>l.id===SCOPE):null;
+  const url=location.origin+location.pathname+(lg?"?join="+lg.code:"");
+  return `Road to the Final #${dayNo()+1} ⚽\n${km} km · ${correct}/8${km>=FINISH?" 🏆 reached the final!":""}\n${list.map(em).join("")}\n${lg?"Join my league "+lg.name+": ":""}${url}`;}
+async function shareResult(txt,btn){
+  try{if(navigator.share){await navigator.share({text:txt});return;}}catch(e){if(e&&e.name==="AbortError")return;}
+  try{await navigator.clipboard.writeText(txt);btn.textContent="Copied ✓";setTimeout(()=>btn.textContent="Share",2000);}catch(e){prompt("Copy your result:",txt);}}
 function best(src){
   src=src&&src.back?src:{mine:log.map(x=>x&&{label:x.label,km:x.km}),back:finish,total};
   const TOP=TIERS[TIERS.length-1][1];
@@ -751,9 +759,10 @@ function resultView(h){
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
   ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
   <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. One attempt per day. Come back tomorrow for a new set!</p>
-  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>`;
+  <div class="row"><button type="button" id="share2">Share</button><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>`;
   cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
   h.key=todayKey();
+  document.getElementById("share2").onclick=e=>shareResult(shareText(h.km,h.correct,(h.log||[]).map(x=>x.k)),e.currentTarget);
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
   travel(h.km,0);renderBoard();
 }
@@ -784,7 +793,7 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
   const sp=document.getElementById("splash"),bi=document.getElementById("bi");if(!sp)return;
   {const hh=store.get("rtf_hist",{})[todayKey()];if(hh&&hh.done){sp.remove();return;}}
   const L=PX([-0.12,51.51]);
-  bi.innerHTML=`<g id="lon">${londonLayers(false)}</g>`+`<g id="pin"><circle cx="256" cy="177" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="244" y="185" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Arsenal · London</text><circle cx="309" cy="265" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="297" y="273" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">PSG · Paris</text><circle cx="520" cy="286" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="532" y="294" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Bayern · Munich</text><circle cx="464" cy="375" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="476" y="383" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Inter · Milan</text><circle cx="306" cy="509" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="318" y="517" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Barça · Barcelona</text><path transform="translate(177,540) scale(1.6)" d="M0-12L3-4L11.5-4L4.6 1.2L7.2 9.6L0 4.6L-7.2 9.6L-4.6 1.2L-11.5-4L-3-4Z" fill="#e8b600" stroke="#14213d" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="203" y="574" text-anchor="start" font-size="30" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#d62828" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">FINAL · MADRID</text></g>`;
+  bi.innerHTML=`<g id="spsea" opacity="0"><rect x="-6000" y="-6000" width="12000" height="12000" fill="#8fc3d6"/><rect x="-6000" y="-6000" width="12000" height="12000" fill="url(#wavesBig)"/></g><g id="lon">${londonLayers(false)}</g>`+`<g id="pin"><circle cx="256" cy="177" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="244" y="185" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Arsenal · London</text><circle cx="309" cy="265" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="297" y="273" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">PSG · Paris</text><circle cx="520" cy="286" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="532" y="294" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Bayern · Munich</text><circle cx="464" cy="375" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="476" y="383" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Inter · Milan</text><circle cx="306" cy="509" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="318" y="517" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Barça · Barcelona</text><path transform="translate(177,540) scale(1.6)" d="M0-12L3-4L11.5-4L4.6 1.2L7.2 9.6L0 4.6L-7.2 9.6L-4.6 1.2L-11.5-4L-3-4Z" fill="#e8b600" stroke="#14213d" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="203" y="574" text-anchor="start" font-size="30" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#d62828" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">FINAL · MADRID</text></g>`;
   const wide=innerWidth>900,V0=[wide?-830:-430,-380,1560,1150],V1=[0,15,700,655];
   const set=v=>bi.setAttribute("viewBox",v.map(n=>n.toFixed(2)).join(" "));set(V0);
   const nb=document.getElementById("nickbox");
@@ -808,9 +817,9 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
     const step=now=>{const f=D?Math.min(1,(now-t0)/D):1,e=f<.5?4*f*f*f:1-Math.pow(-2*f+2,3)/2;
       const w=V0[2]*Math.pow(V1[2]/V0[2],e),u=(Math.log(V0[2])-Math.log(w))/(Math.log(V0[2])-Math.log(V1[2])),a=V0[3]/V0[2]+(V1[3]/V1[2]-V0[3]/V0[2])*u;
       const cx=c0[0]+(c1[0]-c0[0])*u,cy=c0[1]+(c1[1]-c0[1])*u,h=w*a;
-      set([cx-w/2,cy-h/2,w,h]);pin.style.opacity=String(Math.max(0,1-u*1.2));
+      set([cx-w/2,cy-h/2,w,h]);pin.style.opacity=String(Math.max(0,1-u*1.2));{const se=document.getElementById("spsea");if(se)se.setAttribute("opacity",Math.min(1,f*1.25).toFixed(3));}
       if(f<1)requestAnimationFrame(step);
-      else{sp.style.opacity="0";setTimeout(()=>{sp.remove();const b=document.getElementById("start");if(b)b.click();},700);}};
+      else{const b=document.getElementById("start");if(b)b.click();sp.style.transition="opacity .9s ease";sp.style.opacity="0";setTimeout(()=>sp.remove(),950);}};
     requestAnimationFrame(step);};
   document.getElementById("trow").innerHTML=TIERS.map((t,i)=>`<div class="tv"><svg viewBox="-15 -15 30 30" aria-hidden="true"><circle r="13" fill="#fff" stroke="#14213d" stroke-width="1.8"/>${i===6?`<clipPath id="rc"><circle r="12.1"/></clipPath><image href="${EIMG.ronaldo}" x="-12.1" y="-12.1" width="24.2" height="24.2" clip-path="url(#rc)" preserveAspectRatio="xMidYMid slice"/>`:VEH[i](["#c8102e","#ffffff"])}</svg><b>${t[1]} km</b><small>${t[2]}</small></div>`).join("");
 })();
