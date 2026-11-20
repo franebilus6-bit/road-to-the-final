@@ -564,7 +564,9 @@ function boardHtml(){
   let h=`<details class="hist" open><summary>🏆 Today's leaderboard</summary>`;
   if(!nick())h+=`<div class="row" style="justify-content:flex-start;gap:8px;margin:6px 0"><input id="nick" maxlength="24" placeholder="Your nickname" style="flex:1;min-width:0"><button type="button" class="ghost" id="nickok">Join</button></div><p class="rule" style="margin:0">Pick a nickname to appear on the board.</p>`;
   else if(!canPost)h+=`<p class="rule" style="margin:6px 0">Your score could not be posted right now. It will retry next time you open the game.</p>`;
-  h+=rows.length?`<table>${rows.map((r,i)=>`<tr${r.me?' style="font-weight:700"':""}><td>${i+1}. ${esc(r.n)}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`).join("")}</table>`:`<p class="rule" style="margin:6px 0 0">Nobody has played today yet.</p>`;
+  {const row=(r,i)=>`<tr${r.me?' style="font-weight:700;background:rgba(255,214,10,.25)"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
+  const mi=rows.findIndex(r=>r.me);
+  h+=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> of ${rows.length} players today.</p>`:`<p class="rule" style="margin:6px 0 0">${rows.length} player${rows.length===1?"":"s"} today.</p>`}`:`<p class="rule" style="margin:6px 0 0">Nobody has played today yet.</p>`;}
   return h+`</details>`;
 }
 function renderBoard(){
