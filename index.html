@@ -521,24 +521,26 @@ function finish(){
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
   <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
-  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">Best answers</button><button type="button" id="again">Play again</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result.":"Practice run, not saved."}</p>${histHtml()}`;
+  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button><button type="button" id="again">Play again</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result.":"Practice run, not saved."}</p>${histHtml()}`;
   renderBoard();
   document.getElementById("again").onclick=restart;
-  document.getElementById("bestbtn").onclick=best;
+  document.getElementById("bestbtn").onclick=()=>best();
   document.getElementById("copy").onclick=async()=>{const m=document.getElementById("msg");try{await navigator.clipboard.writeText(line);m.textContent="Copied: "+line;}catch(e){m.textContent=line;}};
 }
-function best(){
+function best(src){
+  src=src&&src.back?src:{mine:log.map(x=>x&&{label:x.label,km:x.km}),back:finish,total};
+  const TOP=TIERS[TIERS.length-1][1];
   const rows=CATS.map((c,i)=>{const yr=c.type==="year";
-    const ns=Object.keys(c.a).map(n=>({n,sh:share(c,n)})).sort((a,b)=>a.sh-b.sh).slice(0,3);if(JOKER[c.title]&&!ns.some(x=>x.n===JOKER[c.title]))ns.push({n:JOKER[c.title],sh:share(c,JOKER[c.title])});
-    const mine=log[i];
+    const all=Object.keys(c.a).map(n=>({n,sh:share(c,n)})).sort((a,b)=>a.sh-b.sh);let ns=all.filter(x=>tierFor(c,x.n)[1]===TOP);if(!ns.length)ns=all.slice(0,3);
+    const mine=src.mine[i];
     return `<div class="bestcat"><div class="eyebrow" style="margin:0">${i+1}. ${esc(c.title)}</div>
-    <ol>${ns.map(x=>{const t=tierFor(c,x.n);return `<li><b>${esc(x.n.replace(/\s*\(.*\)$/,""))}${yr?".":""}</b>${isJoker(c,x.n)?" 🃏":""} <span style="color:${t[3]}">${t[1]} km · ${esc(t[2])}</span> <small>(${pct(x.sh)})</small></li>`}).join("")}</ol>
-    ${mine?`<div class="mine">Your answer: <b>${esc(mine.label)}</b> · ${mine.km} km</div>`:""}</div>`;}).join("");
+    <ol style="columns:2;column-gap:18px;margin:6px 0">${ns.map(x=>{const t=tierFor(c,x.n),siu=t[1]===TOP;return `<li style="break-inside:avoid"><b>${esc(x.n.replace(/\s*\(.*\)$/,""))}${yr?".":""}</b>${isJoker(c,x.n)?" 🃏":""} <small style="opacity:.7">${pct(x.sh).replace("less than ","<")}</small>${siu?"":` <span style="color:${t[3]}">${t[1]} km</span>`}</li>`}).join("")}</ol>
+    ${mine?`<div class="mine">Your answer: <b>${esc(mine.label)}</b> · ${mine.km} km${mine.km>=TOP?" 🚀 SIUUU!":""}</div>`:""}</div>`;}).join("");
   const max=CATS.reduce((s,c)=>s+Math.max(...Object.keys(c.a).map(n=>tierFor(c,n)[1])),0);
-  stage.innerHTML=`<div class="eyebrow">Set ${SETS.indexOf(CATS)+1} · best answers</div><h2>Rarest correct answers</h2>
-  <p class="rule">The three rarest correct answers in each question. With the best answer every time you would reach ${max} km; you made ${total} km.</p>
+  stage.innerHTML=`<div class="eyebrow">Set ${SETS.indexOf(CATS)+1} · best answers</div><h2>SIUUU answers</h2>
+  <p class="rule">Every answer that launches <b>SIUUU</b> (620 km) in each question, rarest first. 🃏 = joker. With a SIUUU answer every time you would reach ${max} km; you made ${src.total} km.</p>
   ${rows}<div class="row"><button type="button" class="ghost" id="back">Back to result</button><button type="button" id="again2">Play again</button></div>`;
-  document.getElementById("back").onclick=finish;document.getElementById("again2").onclick=restart;
+  document.getElementById("back").onclick=()=>src.back();document.getElementById("again2").onclick=restart;
   stage.scrollTop=0;
 }
 /* dnevni set: mijenja se u ponoć po lokalnom vremenu; pamti se samo prvi pokušaj dana (u ovom pregledniku) */
@@ -605,9 +607,10 @@ function resultView(h){
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
   ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
   <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. Only your first attempt counts, but you can still play a practice run.</p>
-  <div class="row"><span></span><button type="button" class="ghost" id="practice">Practice run</button></div>${histHtml()}`;
+  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button><button type="button" class="ghost" id="practice">Practice run</button></div>${histHtml()}`;
   cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
   h.key=todayKey();
+  document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
   document.getElementById("practice").onclick=()=>{clearInterval(cdTimer);ranked=false;travel(0,0);hideAll();ask();};
   travel(h.km,0);renderBoard();
 }
