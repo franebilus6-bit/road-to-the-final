@@ -786,11 +786,11 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
   const set=v=>bi.setAttribute("viewBox",v.map(n=>n.toFixed(2)).join(" "));set(V0);
   const nb=document.getElementById("nickbox");
   const drawAuth=()=>{
-    if(signedIn())nb.innerHTML=`<div class="authok">Playing as <b>${esc(PROFILE.name)}</b></div>`;
-    else if(ME)nb.innerHTML=`<input id="nick0" maxlength="24" placeholder="Name other players will see" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"><div class="merr" id="nerr"></div>`;
+    if(signedIn())nb.innerHTML=`<div class="authok">✅ Playing as <b>${esc(PROFILE.name)}</b> · <a href="#" id="sp_out">sign out</a></div>`;
+    else if(ME)nb.innerHTML=`<div class="authok">✅ Signed in as <b>${esc(ME.email||"Google user")}</b><br>Now pick the name other players will see:</div><input id="nick0" maxlength="24" placeholder="Name other players will see" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"><div class="merr" id="nerr"></div>`;
     else if(sb)nb.innerHTML=`<button type="button" class="gbtn big" id="g0">${GICON} Continue with Google</button><div class="guest">or press START to play as a guest (not on the leaderboard)</div>`;
     else nb.innerHTML="";
-    const g=document.getElementById("g0");if(g)g.onclick=signIn;
+    const g=document.getElementById("g0");if(g)g.onclick=signIn;const so=document.getElementById("sp_out");if(so)so.onclick=e=>{e.preventDefault();signOut();};
     const i0=document.getElementById("nick0");if(i0){i0.focus({preventScroll:true});i0.addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("go0").click();});}
     else document.getElementById("go0").focus({preventScroll:true});};
   READY.then(drawAuth);
