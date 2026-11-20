@@ -160,7 +160,7 @@ header button.ghost{background:#fff}
 <header>
   <h1>Road to <span>the Final</span></h1>
   <span class="tag">Eight questions, the grounds of Europe's champions, the Champions League final at the end. The rarer your answer, the further you go.</span>
-  <span class="sets" role="group" aria-label="Question sets"><button type="button" class="ghost" data-s="0">Set 1</button><button type="button" class="ghost" data-s="1">Set 2</button><button type="button" class="ghost" data-s="2">Set 3</button><button type="button" class="ghost" id="restart">Restart</button></span>
+  <span class="sets" role="group" aria-label="Question sets"><button type="button" class="ghost" data-s="0">Set 1</button><button type="button" class="ghost" data-s="1">Set 2</button><button type="button" class="ghost" data-s="2">Set 3</button></span>
 </header>
 <main>
   <section class="mapcard" aria-label="Route map from London to the Champions League final in Madrid">
@@ -520,10 +520,9 @@ function finish(){
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
   <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
-  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button><button type="button" id="again">Play again</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result.":"Practice run, not saved."}</p>${histHtml()}`;
+  <div class="row"><button type="button" class="ghost" id="copy">Copy result</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>${histHtml()}`;
   renderBoard();
-  document.getElementById("again").onclick=restart;
-  document.getElementById("bestbtn").onclick=()=>best();
+    document.getElementById("bestbtn").onclick=()=>best();
   document.getElementById("copy").onclick=async()=>{const m=document.getElementById("msg");try{await navigator.clipboard.writeText(line);m.textContent="Copied: "+line;}catch(e){m.textContent=line;}};
 }
 function best(src){
@@ -538,8 +537,8 @@ function best(src){
   const max=CATS.reduce((s,c)=>s+Math.max(...Object.keys(c.a).map(n=>tierFor(c,n)[1])),0);
   stage.innerHTML=`<div class="eyebrow">Set ${SETS.indexOf(CATS)+1} · best answers</div><h2>SIUUU answers</h2>
   <p class="rule">Every answer that launches <b>SIUUU</b> (620 km) in each question, rarest first. 🃏 = joker. With a SIUUU answer every time you would reach ${max} km; you made ${src.total} km.</p>
-  ${rows}<div class="row"><button type="button" class="ghost" id="back">Back to result</button><button type="button" id="again2">Play again</button></div>`;
-  document.getElementById("back").onclick=()=>src.back();document.getElementById("again2").onclick=restart;
+  ${rows}<div class="row"><button type="button" class="ghost" id="back">Back to result</button></div>`;
+  document.getElementById("back").onclick=()=>src.back();
   stage.scrollTop=0;
 }
 /* dnevni set: mijenja se u ponoć po lokalnom vremenu; pamti se samo prvi pokušaj dana (u ovom pregledniku) */
@@ -605,20 +604,19 @@ function resultView(h){
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}. · already played</div><h2>${done?"You reached the final today 🏆":"Today's result"}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
   ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
-  <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. Only your first attempt counts, but you can still play a practice run.</p>
-  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button><button type="button" class="ghost" id="practice">Practice run</button></div>${histHtml()}`;
+  <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. One attempt per day. Come back tomorrow for a new set!</p>
+  <div class="row"><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>${histHtml()}`;
   cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
   h.key=todayKey();
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
-  document.getElementById("practice").onclick=()=>{clearInterval(cdTimer);ranked=false;travel(0,0);hideAll();ask();};
   travel(h.km,0);renderBoard();
 }
 function intro(){
-  {const hh=store.get("rtf_hist",{})[todayKey()];if(hh&&hh.done){pickDaily();resultView(hh);return;}}
+  {const all=store.get("rtf_hist",{}),hh=all[todayKey()];if(hh){if(!hh.done){hh.done=true;store.set("rtf_hist",all);pushScore();}pickDaily();resultView(hh);return;}}
   pickDaily();
   const h=store.get("rtf_hist",{})[todayKey()],d=new Date();
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}.</div><h2>Eight questions to the final</h2>
-  <p class="rule">A new set every day at midnight. Only your <b>first attempt</b> of the day is saved; you can replay as much as you like after that.</p>
+  <p class="rule">A new set every day at midnight. You get <b>one attempt</b> per day, so make it count.</p>
   ${h?`<p class="rule"><b>Today's saved result: ${h.km} km${h.done?"":" (unfinished)"}.</b> This run is practice and won't be saved.</p>`:""}
   <div class="row"><span></span><button type="button" id="start">${h?"Practice":"Start"}</button></div>${histHtml()}`;
   renderBoard();
@@ -629,7 +627,7 @@ function intro(){
 }
 function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();travel(0,0);intro();}
 function markSet(){document.querySelectorAll(".sets button[data-s]").forEach(b=>b.classList.toggle("on",SETS[+b.dataset.s]===CATS));}
-document.getElementById("restart").onclick=restart;
+
 document.querySelectorAll(".sets button[data-s]").forEach(b=>b.onclick=()=>{CATS=SETS[+b.dataset.s];markSet();restart();});
 drawMap();setBall(0);hud(0);pickDaily();markSet();intro();
 document.getElementById("follow").onclick=function(){follow=!follow;this.textContent=follow?"Whole map":"Follow me";setBall(shown);};
