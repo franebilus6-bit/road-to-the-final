@@ -217,7 +217,7 @@ body.playing #mechip{display:none}
 </style>
 </head>
 <body>
-<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 football questions a day.</b> Type a correct answer to travel from London to the <b>Champions League final in Madrid</b>.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2"><b>Rarer answer = more km. Faster answer = bonus.</b> Wrong answer = 0 km. Reach Madrid and the extra kilometres keep you rolling on to Lisbon as a bonus.</p></div></div></div>
+<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:#ffd60a;text-shadow:0 3px 0 #14213d,0 -2px 0 #14213d,3px 0 0 #14213d,-3px 0 0 #14213d,0 0 2px #14213d">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 football questions a day.</b> Type a correct answer to travel from London to the <b>Champions League final in Madrid</b>.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2"><b>Rarer answer = more km. Faster answer = bonus.</b> Wrong answer = 0 km. Reach Madrid and the extra kilometres keep you rolling on to Lisbon as a bonus.</p></div></div></div>
 <div class="sah" aria-hidden="true"></div>
 <header>
   <h1>Road to <span>the Final</span></h1>
@@ -735,9 +735,9 @@ async function saveName(v){
 let dbWrite=Promise.resolve();
 var pushScore=function(){
   if(!sb||!signedIn())return;
-  const k=todayKey(),h=store.get("rtf_hist",{})[k];if(!h)return;
+  const k=todayKey(),all=store.get("rtf_hist",{}),h=all[k];if(!h||(h.done&&h.synced===ME.id))return;
   const row={user_id:ME.id,day:k,km:h.km||0,correct:h.correct||0,answered:h.answered||0,done:!!h.done,log:h.log||null,updated_at:new Date().toISOString()};
-  dbWrite=dbWrite.then(()=>sb.from("results").upsert(row,{onConflict:"user_id,day"})).then(()=>loadBoard()).catch(()=>{});
+  dbWrite=dbWrite.then(()=>sb.from("results").upsert(row,{onConflict:"user_id,day"})).then(r=>{if(row.done&&(!r.error||r.status===403)){const a2=store.get("rtf_hist",{});if(a2[k]){a2[k].synced=ME.id;store.set("rtf_hist",a2);}}loadBoard();}).catch(()=>{});
 };
 async function loadBoard(){
   if(!sb)return;
