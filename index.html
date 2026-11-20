@@ -6,8 +6,19 @@
 <title>Road to the Final</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
 <meta name="description" content="Daily football quiz: the rarer your answer, the further you travel to the Champions League final.">
-<meta property="og:title" content="Road to the Final">
-<meta property="og:description" content="8 football questions a day. Rare answers take you further. Can you reach the final?">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://roadtothefinal.org/">
+<meta property="og:site_name" content="Road to the Final">
+<meta property="og:title" content="Road to the Final ⚽ daily football quiz">
+<meta property="og:description" content="8 football questions a day. The rarer your answer, the further you travel towards the Champions League final. Can you reach Madrid?">
+<meta property="og:image" content="https://roadtothefinal.org/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Road to the Final: a map of Europe from London to the final in Madrid">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Road to the Final ⚽ daily football quiz">
+<meta name="twitter:description" content="8 football questions a day. The rarer your answer, the further you travel.">
+<meta name="twitter:image" content="https://roadtothefinal.org/og.jpg">
+<link rel="canonical" href="https://roadtothefinal.org/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -189,10 +200,24 @@ tr.me{font-weight:700;background:rgba(255,214,10,.25)}
 #mechip .who{color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #mechip button{font-size:12.5px;padding:3px 9px}
 body.playing #mechip{display:none}
+.namein{font:inherit;font-size:16px;padding:10px 14px;border:2px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);box-shadow:0 3px 0 rgba(20,33,61,.18);outline:none;min-width:0;flex:1;transition:border-color .15s,box-shadow .15s}
+.namein:focus{border-color:#2e8b3a;box-shadow:0 0 0 3px rgba(46,139,58,.25)}
+.namein.big{font-size:19px;padding:12px 16px;width:min(420px,80vw);border-width:3px;flex:none}
+.acctbtn{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:5px 14px;font-weight:700;font-size:14px;cursor:pointer}
+#acct{position:fixed;inset:0;z-index:80;background:rgba(10,20,35,.55);display:flex;align-items:flex-start;justify-content:center;padding:5vh 12px;overflow-y:auto}
+.acard{position:relative;background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:18px 18px 14px;width:min(560px,100%);box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.aclose{position:absolute;top:10px;right:10px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink)}
+.asec{border-top:1px solid rgba(20,33,61,.15);padding:12px 0}
+.alabel{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.6px;font-size:13px;color:var(--red);margin-bottom:6px;display:block}
+.arow{display:flex;gap:8px;align-items:center}
+.lgitem{border:2px solid var(--ink);border-radius:10px;padding:10px;margin:6px 0;background:#fff}.lgitem.new{border-color:#2e8b3a;box-shadow:0 0 0 3px rgba(46,139,58,.25)}
+.lgitem .code{font-family:monospace;letter-spacing:2px;background:var(--paper);padding:1px 6px;border-radius:4px;font-size:13px}
+.lgitem button{font-size:13px;padding:5px 10px}
+.pastt tr{cursor:pointer}.pastt tr:hover{background:rgba(46,139,58,.1)}
 </style>
 </head>
 <body>
-<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 questions</b> · 5 s to read, 25 s to answer · type a <b>correct</b> answer to travel from London through the champions of Europe's top five leagues to the <b>final in Madrid</b>. Wrong or no answer = 0 km.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2">The fewer players who give your answer, the faster you travel. Answer fast for a bonus: within 3 s ×1.3, 6 s ×1.2, 10 s ×1.1; after 15 s ×0.9, after 20 s ×0.8. Most questions also hide a <b>joker</b>: a cult answer that always launches SIUUU. Past the final it is all bonus, all the way to Lisbon.</p></div></div></div>
+<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 football questions a day.</b> Type a correct answer to travel from London to the <b>Champions League final in Madrid</b>.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2"><b>Rarer answer = more km. Faster answer = bonus.</b> Wrong answer = 0 km. Reach Madrid and the extra kilometres keep you rolling on to Lisbon as a bonus.</p></div></div></div>
 <div class="sah" aria-hidden="true"></div>
 <header>
   <h1>Road to <span>the Final</span></h1>
@@ -203,7 +228,6 @@ body.playing #mechip{display:none}
   <div class="leftcol">
   <section class="mapcard" aria-label="Route map from London to the Champions League final in Madrid">
     <svg id="map" viewBox="0 15 700 655" role="img" aria-label="Map of Europe with the grounds on the route"></svg>
-    <button type="button" class="follow" id="follow">Whole map</button>
     <div class="bar"><i id="bar"></i></div>
     <div class="score">
       <div class="km"><span id="km">0</span><small>km</small></div>
@@ -218,7 +242,7 @@ body.playing #mechip{display:none}
     <details>
       <summary>How scoring works</summary>
       <table><tr><td>more than 30% of players</td><td>Scooter</td><td class="n">35 km</td></tr><tr><td>15–30%</td><td>Night bus</td><td class="n">85 km</td></tr><tr><td>8–15%</td><td>Bullet train</td><td class="n">150 km</td></tr><tr><td>4–8%</td><td>ultras' convoy</td><td class="n">240 km</td></tr><tr><td>2–4%</td><td>Budget flight</td><td class="n">340 km</td></tr><tr><td>1–2%</td><td>Private jet</td><td class="n">425 km</td></tr><tr><td>less than 1%</td><td>SIUUU launch</td><td class="n">620 km</td></tr></table>
-      <p class="note">You get 5 seconds to read each question and 25 to answer. A wrong answer or running out of time scores 0 km. The final is at 3400 km; anything beyond is bonus. Rarity comes from real English Wikipedia page views over the last five years (Nov 2021 to Oct 2026): 40% from the square root of views, 60% from simulated players who answer in proportion to views. There are no real players yet.</p>
+      <p class="note">You get 5 seconds to read each question and 25 to answer. A wrong answer or running out of time scores 0 km. The road ends at the final in Madrid (3,400 km); every kilometre past it is bonus that carries you on to Benfica's Estádio da Luz in Lisbon. Rarity comes from real English Wikipedia page views over the last five years (Nov 2021 to Oct 2026): 40% from the square root of views, 60% from simulated players who answer in proportion to views. There are no real players yet.</p>
     </details>
   </section>
 </main>
@@ -285,7 +309,7 @@ function road(a,b,i){
 function londonLayers(tint){
   const FL={"826":"en","250":"fr","276":"de","380":"it","724":"es"};
   return EU.map(o=>`<path d="${o.d}" fill="var(--land)" stroke="#b7a982" stroke-width=".6" stroke-linejoin="round"/>`+(FL[o.id]?`<path d="${o.d}" fill="url(#flag-${FL[o.id]})" fill-opacity=".62" stroke="#14213d" stroke-width=".8" stroke-linejoin="round"/>`:"")).join("")+
-  (tint?`<path id="tint" d="M0 0"/>`:"")+ED.roads+ED.mts+ED.cities+ED.seas+ED.lms+ED.lmlab;
+  (tint?`<path id="tint" d="M0 0"/>`:"")+ED.mts+ED.lms+ED.lmlab;
 }
 function drawMap(){
   let s=`<defs><pattern id="sah" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#fff"/><rect width="2" height="2" fill="#d62828"/><rect x="2" y="2" width="2" height="2" fill="#d62828"/></pattern><pattern id="club" width="28" height="28" patternUnits="userSpaceOnUse"></pattern><pattern id="waves" width="64" height="34" patternUnits="userSpaceOnUse"><path d="M4 10q6-5 12 0t12 0" fill="none" stroke="#6fb3c9" stroke-width="1.1" stroke-linecap="round"/><path d="M36 27q6-5 12 0t12 0" fill="none" stroke="#6fb3c9" stroke-width="1.1" stroke-linecap="round"/></pattern><pattern id="wavesBig" width="64" height="34" patternUnits="userSpaceOnUse" patternTransform="scale(2.4)"><path d="M4 10q6-5 12 0t12 0" fill="none" stroke="#6aa9be" stroke-width="1.1" stroke-linecap="round"/><path d="M36 27q6-5 12 0t12 0" fill="none" stroke="#6aa9be" stroke-width="1.1" stroke-linecap="round"/></pattern><pattern id="pitch" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="18" height="36" fill="#2e8b3a"/><rect x="18" width="18" height="36" fill="#38a145"/></pattern><pattern id="flag-fr" width="1" height="1" patternContentUnits="objectBoundingBox"><rect width=".34" height="1" fill="#0055a4"/><rect x=".333" width=".34" height="1" fill="#fff"/><rect x=".666" width=".334" height="1" fill="#ef4135"/></pattern><pattern id="flag-it" width="1" height="1" patternContentUnits="objectBoundingBox"><rect width=".34" height="1" fill="#009246"/><rect x=".333" width=".34" height="1" fill="#fff"/><rect x=".666" width=".334" height="1" fill="#ce2b37"/></pattern><pattern id="flag-de" width="1" height="1" patternContentUnits="objectBoundingBox"><rect width="1" height=".34" fill="#222"/><rect y=".333" width="1" height=".34" fill="#dd0000"/><rect y=".666" width="1" height=".334" fill="#ffce00"/></pattern><pattern id="flag-es" width="1" height="1" patternContentUnits="objectBoundingBox"><rect width="1" height="1" fill="#f1bf00"/><rect width="1" height=".25" fill="#aa151b"/><rect y=".75" width="1" height=".25" fill="#aa151b"/></pattern><pattern id="flag-en" width="1" height="1" patternContentUnits="objectBoundingBox"><rect width="1" height="1" fill="#fff"/><rect x=".44" width=".12" height="1" fill="#ce1124"/><rect y=".46" width="1" height=".08" fill="#ce1124"/></pattern><pattern id="streets" width="140" height="140" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"></pattern></defs><rect x="-60" y="-60" width="820" height="820" fill="#9fd0de"/><rect x="-60" y="-60" width="820" height="820" fill="url(#waves)"/>`;
@@ -503,6 +527,7 @@ function stopTimer(){clearInterval(tick);tick=0;}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dots(){return `<div class="dots" aria-hidden="true">${CATS.map((c,i)=>`<i class="${i<log.length?(log[i].ok?"ok":"no"):i===idx?"now":""}"></i>`).join("")}</div>`;}
 function ask(){
+  if(!follow){follow=true;setBall(shown);}
   clearTimeout(autoNext);document.body.classList.toggle("playing",true);document.body.classList.toggle("done",false);
   const c=CATS[idx],t=TYPE[c.type],yr=c.type==="year";
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
@@ -543,7 +568,7 @@ function lock(name,label,why){
   let km=0,tr=null,sh=0;
   lastSec=ansStart?(performance.now()-ansStart)/1000:25;lastMult=speedMult(lastSec);
   if(ok){sh=share(c,name);tr=tierFor(c,name);km=Math.round(tr[1]*lastMult);vehicle(TIERS.indexOf(tr));}
-  total+=km;log.push({title:c.title,label,ok,km,tr:tr?tr[2]:""});
+  total+=km;log.push({title:c.title,label,ok,km,tr:tr?tr[2]:"",ti:ok?TIERS.indexOf(tr):-1});
   {const ti=ok?TIERS.indexOf(tr):-1;if(ti===6)kick(()=>travel(total,DUR[6]));else travel(total,ok?DUR[ti]:0);}
   const top=mostCommon(c),last=idx===CATS.length-1;
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div>
@@ -556,6 +581,7 @@ function lock(name,label,why){
   go.onclick=nxt;autoNext=setTimeout(nxt,ok&&TIERS.indexOf(tr)===6?3200:2400);
 }
 function finish(){
+  follow=false;
   setTimeout(renderStats,0);
   clearTimeout(autoNext);document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   const wasRanked=ranked;if(ranked){saveRanked(true);ranked=false;}
@@ -564,10 +590,54 @@ function finish(){
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
   <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
-  <div class="row"><button type="button" id="copy">Share</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
+  <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="copy">Share</button><button type="button" class="ghost" id="replay">▶ Replay route</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button><button type="button" class="ghost" id="past">📅 Past days</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
   renderBoard();
     document.getElementById("bestbtn").onclick=()=>best();
+  const rl=log.map(x=>x.km),rt=log.map(x=>x.ti);
+  document.getElementById("replay").onclick=()=>replayRoute(rl,rt);
+  document.getElementById("past").onclick=()=>pastList(finish);
+  clearTimeout(replayT);replayT=setTimeout(()=>replayRoute(rl,rt),1800);
   document.getElementById("copy").onclick=e=>shareResult(shareText(total,log.filter(x=>x.ok).length,log.map(x=>x.km)),e.currentTarget);
+}
+/* ---------- route replay: the whole trip on the full map, one vehicle after another ---------- */
+let replayT=0;
+const tierFromKm=k=>k<=46?0:k<=111?1:k<=195?2:k<=312?3:k<=442?4:k<=553?5:6;
+function replayRoute(kms,tiers){
+  clearTimeout(replayT);cancelAnimationFrame(anim);follow=false;
+  const steps=(kms||[]).map((k,j)=>({k,t:tiers&&tiers[j]!=null&&tiers[j]>=0?tiers[j]:tierFromKm(k)})).filter(x=>x.k>0);
+  shown=0;vehicle(0);setBall(0);hud(0);document.getElementById("km").textContent="0";
+  let cum=0,i=0;
+  const next=()=>{if(i>=steps.length){hud(cum);return;}const st=steps[i++];cum+=st.k;vehicle(st.t);const d=Math.min(1500,550+st.k);travel(cum,d);replayT=setTimeout(next,d+300);};
+  replayT=setTimeout(next,500);
+}
+/* ---------- past days: view only ---------- */
+function dayKeyOf(n){const d=new Date(DAY0);d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function setForDay(n){const r=REMOTE_SETS[dayKeyOf(n)];return (Array.isArray(r)&&r.length===8&&r)||SETS[n]||SETS[((n%SETS.length)+SETS.length)%SETS.length];}
+function pastList(back){
+  clearTimeout(replayT);document.body.classList.toggle("done",true);
+  const t=dayNo(),hist=store.get("rtf_hist",{}),days=[];for(let n=t;n>=0&&days.length<30;n--){const k=dayKeyOf(n);if(n===t&&!hist[k])continue;days.push(n);}
+  stage.innerHTML=`<div class="eyebrow">Past days</div><h2>Earlier sets</h2><p class="rule">Look back at any earlier day: its leaderboard, your result and the SIUUU answers. Past days can't be played.</p>
+  ${days.length?`<table class="pastt">${days.map(n=>{const k=dayKeyOf(n),h=hist[k],dd=k.split("-");return `<tr data-n="${n}"><td><b>#${n+1}</b> · ${+dd[2]}.${+dd[1]}.${dd[0]}.</td><td class="n">${h?`${h.km} km · ${h.correct}/8`:"<span style='opacity:.6'>not played</span>"}</td><td class="n">›</td></tr>`;}).join("")}</table>`:`<p class="rule">No earlier days yet.</p>`}
+  <div class="row"><span></span><button type="button" class="ghost" id="pback">Back</button></div>`;
+  document.getElementById("pback").onclick=back;
+  stage.querySelectorAll("tr[data-n]").forEach(r=>r.onclick=()=>pastDay(+r.dataset.n,back));
+  stage.scrollTop=0;
+}
+async function pastDay(n,back){
+  const k=dayKeyOf(n),dd=k.split("-"),h=store.get("rtf_hist",{})[k],set=setForDay(n);
+  stage.innerHTML=`<div class="eyebrow">Daily set #${n+1} · ${+dd[2]}.${+dd[1]}.${dd[0]}.</div><h2>${h?`You made ${h.km} km`:"You didn't play this day"}</h2>
+  ${h?`<p class="rule">${h.correct}/8 correct${h.km>=FINISH?" · reached the final 🏆":""}</p>`:""}
+  <div class="eyebrow sub">Leaderboard that day</div><div id="pboard"><p class="rule">Loading…</p></div>
+  <div class="row" style="flex-wrap:wrap;gap:8px">${h&&h.log?`<button type="button" class="ghost" id="preplay">▶ Replay route</button>`:""}<button type="button" class="ghost" id="pbest">SIUUU answers</button><button type="button" class="ghost" id="pback2">All days</button></div>`;
+  document.getElementById("pback2").onclick=()=>pastList(back);
+  const pr=document.getElementById("preplay");if(pr)pr.onclick=()=>replayRoute(h.log.map(x=>x.k),h.log.map(x=>x.ti));
+  document.getElementById("pbest").onclick=()=>{const keep=CATS;CATS=set;best({mine:(h&&h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>{CATS=keep;pastDay(n,back);},total:h?h.km:0});};
+  const el=document.getElementById("pboard");
+  if(!sb){el.innerHTML=`<p class="rule">The leaderboard is offline.</p>`;return;}
+  const {data}=await sb.from("results").select("user_id,km,correct,profiles(name)").eq("day",k).order("km",{ascending:false}).limit(500);
+  const rows=(data||[]).filter(r=>r.profiles),meId=ME&&ME.id,mi=rows.findIndex(r=>r.user_id===meId);
+  const row=(r,i)=>`<tr${r.user_id===meId?' class="me"':""}><td>${i+1}. ${esc(r.profiles.name)}</td><td>${r.correct}/8</td><td class="n">${r.km} km${r.km>=FINISH?" 🏆":""}</td></tr>`;
+  const pb=document.getElementById("pboard");if(pb)pb.innerHTML=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table><p class="rule" style="margin:6px 0 0">${rows.length} player${rows.length===1?"":"s"} that day.</p>`:`<p class="rule">Nobody signed in played that day.</p>`;
 }
 function shareText(km,correct,list){
   const em=k=>k<=0?"❌":k<=50?"🛵":k<=110?"🚌":k<=190?"🚄":k<=300?"🚩":k<=440?"🛫":k<=550?"🛩️":"🚀";
@@ -603,7 +673,7 @@ let ranked=false;
 let REMOTE_SETS={};
 const SETS_READY=Promise.race([fetch("https://raw.githubusercontent.com/franebilus6-bit/road-to-the-final/data/sets.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(j=>{if(j&&typeof j==="object")REMOTE_SETS=j;}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
 function pickDaily(){const d=dayNo(),r=REMOTE_SETS[todayKey()];CATS=(Array.isArray(r)&&r.length===8&&r)||(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
-function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok}))};store.set("rtf_hist",h);pushScore();}
+function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok,ti:x.ti}))};store.set("rtf_hist",h);pushScore();}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 /* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
 const SB_URL="https://wrmjrtxrjterkuslwqjp.supabase.co",SB_KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
@@ -684,7 +754,7 @@ function boardHtml(){
   const tabs=`<div class="tabs"><button type="button" class="tab${SCOPE==="global"?" on":""}" data-sc="global">🌍 Everyone</button>${LEAGUES.map(l=>`<button type="button" class="tab${SCOPE===l.id?" on":""}" data-sc="${l.id}">${esc(l.name)}</button>`).join("")}${signedIn()?`<button type="button" class="tab add" id="lgadd">+ League</button>`:""}</div>`;
   let h=`<div class="eyebrow" style="margin:0 0 6px">🏆 Leaderboard</div>${tabs}`;
   if(boardMsg)h+=`<p class="rule" style="margin:6px 0">${boardMsg}</p>`;
-  if(ME&&!PROFILE)h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">✅ Signed in as <b>${esc(ME.email||"Google user")}</b>. Pick the name other players will see:</p><div class="row" style="justify-content:flex-start;gap:8px;margin:0"><input id="bname" maxlength="24" placeholder="Your name" style="flex:1;min-width:0"><button type="button" id="bnameok">Save</button></div><div class="merr" id="bnerr"></div></div>`;
+  if(ME&&!PROFILE)h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">✅ Signed in as <b>${esc(ME.email||"Google user")}</b>. Pick the name other players will see:</p><div class="row" style="justify-content:flex-start;gap:8px;margin:0"><input id="bname" class="namein" maxlength="24" placeholder="Your name" style="flex:1;min-width:0"><button type="button" id="bnameok">Save</button></div><div class="merr" id="bnerr"></div></div>`;
   else if(!signedIn())h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">Sign in with Google to get on the leaderboard and play in leagues with your friends.</p><button type="button" class="gbtn" id="gsign">${GICON} Continue with Google</button></div>`;
   if(dbState==="none")return h+`<p class="rule" style="margin:6px 0 0">The leaderboard is offline right now.</p>`;
   const lg=SCOPE==="global"?null:LEAGUES.find(l=>l.id===SCOPE),mem=lg&&MEMBERS[lg.id],inScope=id=>!lg||(mem&&mem.has(id));
@@ -705,7 +775,7 @@ function renderBoard(){
   el.querySelectorAll(".tab[data-sc]").forEach(b=>b.onclick=()=>{SCOPE=b.dataset.sc;store.set("rtf_scope",SCOPE);boardMsg="";loadBoard();renderBoard();});
   const g=el.querySelector("#gsign");if(g)g.onclick=signIn;
   const bn=el.querySelector("#bnameok");if(bn){const inp=el.querySelector("#bname");const go=async()=>{const e=await saveName(inp.value);if(e){el.querySelector("#bnerr").textContent=e;return;}renderMe();loadBoard();};bn.onclick=go;inp.addEventListener("keydown",e=>{if(e.key==="Enter")go();});}
-  const add=el.querySelector("#lgadd");if(add)add.onclick=leagueForm;
+  const add=el.querySelector("#lgadd");if(add)add.onclick=()=>openAccount("leagues");
   const cp=el.querySelector("#lgcopy");if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(cp.dataset.l);cp.textContent="Link copied ✓";}catch(e){prompt("Copy this link:",cp.dataset.l);}};
   const lv=el.querySelector("#lgleave");if(lv)lv.onclick=async()=>{if(!confirmLeave(lv))return;await sb.from("league_members").delete().eq("league_id",SCOPE).eq("user_id",ME.id);await loadLeagues();SCOPE="global";store.set("rtf_scope",SCOPE);boardMsg="You left the league.";loadBoard();};
 }
@@ -726,19 +796,61 @@ function leagueForm(){
     const {data,error}=await sb.rpc("join_league",{p_code:c});if(error||!data||!data[0]){msg.textContent="No league with that code.";return;}
     await loadLeagues();SCOPE=data[0].id;store.set("rtf_scope",SCOPE);boardMsg=`You joined <b>${esc(data[0].name)}</b>.`;loadBoard();};
 }
-/* header chip: who is signed in, change name, sign out */
+/* ---------- your account: name, your stats, private leagues ---------- */
+async function openAccount(section){
+  if(!signedIn())return;
+  let ov=document.getElementById("acct");
+  if(!ov){ov=document.createElement("div");ov.id="acct";document.body.appendChild(ov);ov.addEventListener("click",e=>{if(e.target===ov)ov.remove();});}
+  ov.innerHTML=`<div class="acard" role="dialog" aria-label="Your account"><button type="button" class="aclose" id="aclose" aria-label="Close">✕</button>
+   <div class="eyebrow" style="margin:0">Your account</div><h2 style="margin:2px 0 10px">${esc(PROFILE.name)}</h2>
+   <div class="asec"><label class="alabel" for="aname">Name other players see</label><div class="arow"><input id="aname" class="namein" maxlength="24" value="${esc(PROFILE.name)}"><button type="button" id="anamesave">Save</button></div><div class="merr" id="anerr"></div></div>
+   <div class="asec"><div class="alabel">Your stats</div><div id="astats"><p class="rule">Loading…</p></div></div>
+   <div class="asec" id="aleagues"><div class="alabel">Your private leagues</div><div id="alist"></div>
+     <div class="arow" style="margin-top:10px"><input id="lgname" class="namein" maxlength="40" placeholder="New league name"><button type="button" id="lgmake">Create</button></div>
+     <div class="arow" style="margin-top:8px"><input id="lgcode" class="namein" maxlength="6" placeholder="Join with code" style="text-transform:uppercase"><button type="button" class="ghost" id="lgjoin">Join</button></div>
+     <div class="merr" id="lgmsg"></div></div>
+   <div class="row" style="margin-top:6px"><span class="rule" style="font-size:12px">${esc(ME.email||"")}</span><button type="button" class="ghost" id="aout">Sign out</button></div></div>`;
+  document.getElementById("aclose").onclick=()=>ov.remove();
+  document.getElementById("aout").onclick=signOut;
+  const nm=document.getElementById("aname"),saveN=async()=>{const e=await saveName(nm.value);document.getElementById("anerr").textContent=e;if(!e){renderMe();loadBoard();ov.querySelector("h2").textContent=PROFILE.name;document.getElementById("anerr").textContent="";document.getElementById("anamesave").textContent="Saved ✓";setTimeout(()=>{const b=document.getElementById("anamesave");if(b)b.textContent="Save";},1500);}};
+  document.getElementById("anamesave").onclick=saveN;nm.addEventListener("keydown",e=>{if(e.key==="Enter")saveN();});
+  const msg=document.getElementById("lgmsg");
+  document.getElementById("lgmake").onclick=async()=>{const n=document.getElementById("lgname").value.trim();if(n.length<2){msg.textContent="Give the league a name.";return;}
+    const {data,error}=await sb.rpc("create_league",{p_name:n});if(error||!data||!data[0]){msg.textContent="Could not create the league.";return;}
+    await loadLeagues();document.getElementById("lgname").value="";msg.textContent="";drawLeagues(data[0].id);loadBoard();};
+  document.getElementById("lgjoin").onclick=async()=>{const c=document.getElementById("lgcode").value.trim().toUpperCase();if(!c){msg.textContent="Type the code.";return;}
+    const {data,error}=await sb.rpc("join_league",{p_code:c});if(error||!data||!data[0]){msg.textContent="No league with that code.";return;}
+    await loadLeagues();document.getElementById("lgcode").value="";msg.textContent="";drawLeagues(data[0].id);loadBoard();};
+  drawLeagues();
+  if(section==="leagues")document.getElementById("aleagues").scrollIntoView({block:"start"});
+  /* stats from the server, so they follow you on every device */
+  const {data}=await sb.from("results").select("day,km,correct").eq("user_id",ME.id).order("day",{ascending:true});
+  const rows=data||[],el=document.getElementById("astats");if(!el)return;
+  if(!rows.length){el.innerHTML=`<p class="rule">No results yet. Play today's set!</p>`;return;}
+  const km=rows.map(r=>r.km),tot=km.reduce((a,b)=>a+b,0),best=Math.max(...km),fin=km.filter(x=>x>=FINISH).length,avg=Math.round(tot/rows.length);
+  const have=new Set(rows.map(r=>r.day));let streak=0;{const d=new Date();if(!have.has(todayKey()))d.setDate(d.getDate()-1);for(;;){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!have.has(k))break;streak++;d.setDate(d.getDate()-1);}}
+  const at=ALLTIME.filter(x=>x.km>0).sort((a,b)=>b.km-a.km),rank=at.findIndex(x=>x.user_id===ME.id);
+  const tile=(v,l)=>`<div class="st"><b>${v}</b><small>${l}</small></div>`;
+  el.innerHTML=`<div class="sts">${tile(rows.length,"days played")}${tile(tot.toLocaleString("en"),"total km")}${tile(best.toLocaleString("en"),"best km")}${tile(avg.toLocaleString("en"),"average km")}${tile(fin+(fin?" 🏆":""),"finals")}</div><p class="rule" style="margin:8px 0 0">${streak?`🔥 ${streak}-day streak · `:""}${rank>=0?`All-time rank: <b>${rank+1}.</b> of ${at.length}`:""}</p>`;
+}
+function drawLeagues(hl){
+  const el=document.getElementById("alist");if(!el)return;
+  el.innerHTML=LEAGUES.length?LEAGUES.map(l=>{const link=location.origin+"/?join="+l.code;return `<div class="lgitem${l.id===hl?" new":""}"><div><b>${esc(l.name)}</b> <span class="code">${l.code}</span></div><div class="arow" style="margin-top:6px;flex-wrap:wrap"><button type="button" data-copy="${esc(link)}">Copy invite link</button><button type="button" class="ghost" data-view="${l.id}">Show table</button><button type="button" class="ghost" data-leave="${l.id}">Leave</button></div></div>`;}).join(""):`<p class="rule" style="margin:4px 0">You're not in any league yet. Create one and send the invite link to your friends.</p>`;
+  el.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="Link copied ✓";}catch(e){prompt("Copy this link:",b.dataset.copy);}});
+  el.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{SCOPE=b.dataset.view;store.set("rtf_scope",SCOPE);boardMsg="";const ov=document.getElementById("acct");if(ov)ov.remove();loadBoard();const bc=document.getElementById("boardcard");if(bc&&document.body.classList.contains("done"))bc.scrollIntoView({behavior:"smooth"});});
+  el.querySelectorAll("[data-leave]").forEach(b=>b.onclick=async()=>{if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Tap again to leave";return;}await sb.from("league_members").delete().eq("league_id",b.dataset.leave).eq("user_id",ME.id);await loadLeagues();if(SCOPE===b.dataset.leave){SCOPE="global";store.set("rtf_scope",SCOPE);}drawLeagues();loadBoard();});
+}
+
+/* header chip: who is signed in */
 function renderMe(){
   let el=document.getElementById("mechip");
   if(!el){el=document.createElement("span");el.id="mechip";const hd=document.querySelector("header");if(!hd)return;hd.appendChild(el);}
-  if(signedIn())el.innerHTML=`<span class="who">👤 ${esc(PROFILE.name)}</span><button type="button" class="ghost" id="mename">Change name</button><button type="button" class="ghost" id="meout">Sign out</button>`;
+  if(signedIn())el.innerHTML=`<button type="button" class="acctbtn" id="meacct">👤 ${esc(PROFILE.name)} <span aria-hidden="true">▾</span></button>`;
   else if(ME)el.innerHTML=`<span class="who">👤 ${esc(ME.email||"")}</span><button type="button" class="ghost" id="meout">Sign out</button>`;
   else if(sb&&dbState==="ok")el.innerHTML=`<button type="button" class="gbtn sm" id="mein">${GICON} Sign in</button>`;
   else el.innerHTML="";
-  const a=document.getElementById("mename"),o=document.getElementById("meout"),i=document.getElementById("mein");
-  if(o)o.onclick=signOut;if(i)i.onclick=signIn;
-  if(a)a.onclick=()=>{el.innerHTML=`<input id="mnew" maxlength="24" value="${esc(PROFILE.name)}" style="width:150px"><button type="button" class="ghost" id="msave">Save</button><button type="button" class="ghost" id="mcancel">Cancel</button><span id="merr" class="merr"></span>`;
-    document.getElementById("mcancel").onclick=renderMe;
-    document.getElementById("msave").onclick=async()=>{const e=await saveName(document.getElementById("mnew").value);if(e){document.getElementById("merr").textContent=e;return;}renderMe();renderBoard();loadBoard();};};
+  const a=document.getElementById("meacct"),o=document.getElementById("meout"),i=document.getElementById("mein");
+  if(a)a.onclick=()=>openAccount();if(o)o.onclick=signOut;if(i)i.onclick=signIn;
 }
 READY.then(()=>{renderMe();if(document.body.classList.contains("done"))loadBoard();setInterval(()=>{if(!document.hidden&&document.body.classList.contains("done"))loadBoard();},30000);});
 
@@ -762,12 +874,14 @@ function resultView(h){
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
   ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
   <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. One attempt per day. Come back tomorrow for a new set!</p>
-  <div class="row"><button type="button" id="share2">Share</button><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button></div>`;
+  <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="share2">Share</button><button type="button" class="ghost" id="replay2">▶ Replay route</button><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button><button type="button" class="ghost" id="past2">📅 Past days</button></div>`;
   cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
   h.key=todayKey();
+  document.getElementById("replay2").onclick=()=>replayRoute((h.log||[]).map(x=>x.k),(h.log||[]).map(x=>x.ti));
+  document.getElementById("past2").onclick=()=>{clearInterval(cdTimer);pastList(()=>resultView(h));};
   document.getElementById("share2").onclick=e=>shareResult(shareText(h.km,h.correct,(h.log||[]).map(x=>x.k)),e.currentTarget);
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
-  travel(h.km,0);renderBoard();
+  follow=false;travel(h.km,0);renderBoard();
 }
 function intro(){
   setTimeout(renderStats,0);
@@ -778,8 +892,9 @@ function intro(){
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}.</div><h2>Eight questions to the final</h2>
   <p class="rule">A new set every day at midnight. You get <b>one attempt</b> per day, so make it count.</p>
   ${h?`<p class="rule"><b>Today's saved result: ${h.km} km${h.done?"":" (unfinished)"}.</b> This run is practice and won't be saved.</p>`:""}
-  <div class="row"><span></span><button type="button" id="start">${h?"Practice":"Start"}</button></div>`;
+  <div class="row"><button type="button" class="ghost" id="past0">📅 Past days</button><button type="button" id="start">${h?"Practice":"Start"}</button></div>`;
   renderBoard();
+  {const p0=document.getElementById("past0");if(p0)p0.onclick=()=>pastList(intro);}
   const b=document.getElementById("start");
   b.onclick=()=>{const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1,at:Date.now()};store.set("rtf_hist",all);pushScore();}ask();};
   b.focus({preventScroll:true});
@@ -789,7 +904,7 @@ function markSet(){document.querySelectorAll(".sets button[data-s]").forEach(b=>
 
 document.querySelectorAll(".sets button[data-s]").forEach(b=>b.onclick=()=>{CATS=SETS[+b.dataset.s];markSet();restart();});
 drawMap();setBall(0);hud(0);pickDaily();markSet();SETS_READY.then(()=>{pickDaily();markSet();intro();});
-document.getElementById("follow").onclick=function(){follow=!follow;this.textContent=follow?"Whole map":"Follow me";setBall(shown);};
+
 
 /* uvodni ekran: cijela Europa s prvacima i finalom, veliki START, pa zum na rutu */
 (function(){
@@ -802,7 +917,7 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
   const nb=document.getElementById("nickbox");
   const drawAuth=()=>{
     if(signedIn())nb.innerHTML=`<div class="authok">✅ Playing as <b>${esc(PROFILE.name)}</b> · <a href="#" id="sp_out">sign out</a></div>`;
-    else if(ME)nb.innerHTML=`<div class="authok">✅ Signed in as <b>${esc(ME.email||"Google user")}</b><br>Now pick the name other players will see:</div><input id="nick0" maxlength="24" placeholder="Name other players will see" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"><div class="merr" id="nerr"></div>`;
+    else if(ME)nb.innerHTML=`<div class="authok">✅ Signed in as <b>${esc(ME.email||"Google user")}</b><br>Now pick the name other players will see:</div><input id="nick0" class="namein big" maxlength="24" placeholder="Name other players will see"><div class="merr" id="nerr"></div>`;
     else if(sb)nb.innerHTML=`<button type="button" class="gbtn big" id="g0">${GICON} Continue with Google</button><div class="guest">or press START to play as a guest (not on the leaderboard)</div>`;
     else nb.innerHTML="";
     const g=document.getElementById("g0");if(g)g.onclick=signIn;const so=document.getElementById("sp_out");if(so)so.onclick=e=>{e.preventDefault();signOut();};
