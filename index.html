@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Road to the Final</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
 <meta name="description" content="Daily football quiz: the rarer your answer, the further you travel to the Champions League final.">
 <meta property="og:title" content="Road to the Final">
 <meta property="og:description" content="8 football questions a day. Rare answers take you further. Can you reach the final?">
@@ -171,10 +172,27 @@ header button.ghost{background:#fff}
 .bc small{text-align:center;font-size:10.5px;color:var(--ink-soft);margin-top:2px}
 .fl{position:absolute;left:0;right:-6px;border-top:2px dashed var(--red);pointer-events:none}
 @media (max-width:420px){.sts{grid-template-columns:repeat(3,1fr)}}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.tab{font-size:13px;padding:4px 10px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;cursor:pointer}
+.tab.on{background:var(--ink);color:#fff}.tab.add{border-style:dashed}
+.eyebrow.sub{margin:12px 0 2px;font-size:12.5px}
+tr.me{font-weight:700;background:rgba(255,214,10,.25)}
+.gbtn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#1f1f1f;border:2px solid var(--ink);border-radius:10px;padding:9px 14px;font-weight:700;font-size:15px;cursor:pointer}
+.gbtn.big{font-size:18px;padding:12px 20px}.gbtn.sm{font-size:13px;padding:4px 10px}
+.signbox{background:var(--paper);border-radius:8px;padding:10px;margin:6px 0 4px}
+.lgbox{margin-top:12px;padding:10px;border:2px dashed var(--ink);border-radius:8px;font-size:14px}.lgbox .code{letter-spacing:2px}
+#nickbox{margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sp #nickbox .guest{font-size:13px;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.authok{background:rgba(255,255,255,.9);padding:6px 14px;border-radius:8px;font-size:16px}
+.merr{color:#d62828;font-weight:700;font-size:13px;background:#fff;border-radius:6px;padding:0 6px}.merr:empty{display:none}
+#mechip{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#mechip .who{color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+#mechip button{font-size:12.5px;padding:3px 9px}
+body.playing #mechip{display:none}
 </style>
 </head>
 <body>
-<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox" style="margin-bottom:6px"><input id="nick0" maxlength="24" placeholder="Your nickname for the leaderboard" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 questions</b> · 5 s to read, 25 s to answer · type a <b>correct</b> answer to travel from London through the champions of Europe's top five leagues to the <b>final in Madrid</b>. Wrong or no answer = 0 km.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2">The fewer players who give your answer, the faster you travel. Answer fast for a bonus: within 3 s ×1.3, 6 s ×1.2, 10 s ×1.1; after 15 s ×0.9, after 20 s ×0.8. Most questions also hide a <b>joker</b>: a cult answer that always launches SIUUU. Past the final it is all bonus, all the way to Lisbon.</p></div></div></div>
+<div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:var(--red)">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 questions</b> · 5 s to read, 25 s to answer · type a <b>correct</b> answer to travel from London through the champions of Europe's top five leagues to the <b>final in Madrid</b>. Wrong or no answer = 0 km.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2">The fewer players who give your answer, the faster you travel. Answer fast for a bonus: within 3 s ×1.3, 6 s ×1.2, 10 s ×1.1; after 15 s ×0.9, after 20 s ×0.8. Most questions also hide a <b>joker</b>: a cult answer that always launches SIUUU. Past the final it is all bonus, all the way to Lisbon.</p></div></div></div>
 <div class="sah" aria-hidden="true"></div>
 <header>
   <h1>Road to <span>the Final</span></h1>
@@ -576,61 +594,140 @@ let ranked=false;
 function pickDaily(){const d=dayNo();CATS=(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
 function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok}))};store.set("rtf_hist",h);pushScore();}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
-let SDB=null,UID=null,BOARD=[],canPost=true,dbWrite=Promise.resolve(),dbState="pending";
-setTimeout(()=>{if(dbState==="pending"){dbState="none";renderBoard();}},10000);
-const nick=()=>store.get("rtf_nick","");
-var pushScore=function(){
-  if(!SDB||!UID||!canPost||!nick())return;
-  const body={nick:nick().slice(0,24),days:store.get("rtf_hist",{}),updated:new Date().toISOString()};
-    dbWrite=dbWrite.then(()=>SDB.doc("scores/"+UID).set(body)).catch(e=>{if(e&&e.code==="invalid_argument"){canPost=false;renderBoard();}});
-};
-function perNick(){const m={};
-  BOARD.forEach(d=>{const n=(d.nick||"?").trim(),key=n.toLowerCase();if(!m[key])m[key]={n,days:{},me:false};if(d.id===UID)m[key].me=true;
-    for(const [day,x] of Object.entries(d.days||{})){if(!x)continue;const o=m[key].days[day],ta=x.at||Infinity,tb=o?(o.at||Infinity):Infinity;
-      if(!o||ta<tb||(ta===tb&&x.km>o.km))m[key].days[day]=x;}});
-  const me=(nick()||"").trim().toLowerCase();if(m[me])m[me].me=true;return m;}
-function boardHtml(){
-  if(!SDB)return `<details class="hist" open><summary>🏆 Today's leaderboard</summary><p class="rule" style="margin:6px 0 0">${dbState==="pending"?"Connecting to the leaderboard…":"The leaderboard is offline right now. Your result is kept on this device and goes up on the board when it is back."}</p></details>`;
-  const k=todayKey(),PN=perNick(),rows=Object.values(PN).map(p=>({n:p.n,me:p.me,t:p.days[k]})).filter(r=>r.t).sort((a,b)=>b.t.km-a.t.km);
-  let h=`<details class="hist" open><summary>🏆 Today's leaderboard</summary>`;
-  if(!nick())h+=`<div class="row" style="justify-content:flex-start;gap:8px;margin:6px 0"><input id="nick" maxlength="24" placeholder="Your nickname" style="flex:1;min-width:0"><button type="button" class="ghost" id="nickok">Join</button></div><p class="rule" style="margin:0">Pick a nickname to appear on the board.</p>`;
-  else if(!canPost)h+=`<p class="rule" style="margin:6px 0">Your score could not be posted right now. It will retry next time you open the game.</p>`;
-  {const row=(r,i)=>`<tr${r.me?' style="font-weight:700;background:rgba(255,214,10,.25)"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
-  const mi=rows.findIndex(r=>r.me);
-  h+=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> of ${rows.length} players today.</p>`:`<p class="rule" style="margin:6px 0 0">${rows.length} player${rows.length===1?"":"s"} today.</p>`}`:`<p class="rule" style="margin:6px 0 0">Nobody has played today yet.</p>`;}
-  {const tot={};for(const [key,p] of Object.entries(PN)){tot[key]={n:p.n,km:0,days:0};
-      Object.values(p.days).forEach(x=>{if(x&&x.km>0){tot[key].km+=x.km;tot[key].days++;}});}
-    const at=Object.entries(tot).map(([k,v])=>Object.assign({k},v)).filter(x=>x.km>0).sort((a,b)=>b.km-a.km);
-    if(at.length){const me=(nick()||"").trim().toLowerCase(),mi=at.findIndex(x=>x.k===me),md=["🥇","🥈","🥉"];
-      h+=`<div class="eyebrow" style="margin:14px 0 4px">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.k===me?' style="font-weight:700;background:rgba(255,214,10,.25)"':""}><td>${md[i]} ${esc(x.n)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>`+
-        (mi>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[mi].km.toLocaleString("en")} km</b> · <b>${mi+1}.</b> of ${at.length}</p>`:"");}}
-  return h+`</details>`;
-}
-function renderBoard(){
-  const el=document.getElementById("boardcard");if(!el)return;const html=boardHtml();el.hidden=!html;el.innerHTML=html.replace("<details class=\"hist\" open>","<details class=\"hist\" open style=\"margin:0\">");
-  const ok=document.getElementById("nickok");
-  if(ok)ok.onclick=()=>{const v=document.getElementById("nick").value.trim();if(!v)return;store.set("rtf_nick",v);pushScore();renderBoard();const st=document.getElementById("start");if(st){st.disabled=false;st.title="";}};
-}
-(async()=>{
-  /* Supabase: table scores(id, secret, nick, days, updated); read through view "board", write through rpc "save_score" */
-  const URL0="https://wrmjrtxrjterkuslwqjp.supabase.co",KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
-  if(URL0.startsWith("__")){dbState="none";renderBoard();return;}
-  const H=Object.assign({apikey:KEY,"Content-Type":"application/json"},KEY.startsWith("sb_")?{}:{Authorization:"Bearer "+KEY});
-  let id=store.get("rtf_uid",""),sec=store.get("rtf_sec","");
-  const rnd=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
-  if(!id){id=rnd();store.set("rtf_uid",id);} if(!sec){sec=rnd();store.set("rtf_sec",sec);}
-  SDB={doc:()=>({set:async body=>{const r=await fetch(URL0+"/rest/v1/rpc/save_score",{method:"POST",headers:H,body:JSON.stringify({p_id:id,p_secret:sec,p_nick:body.nick,p_days:body.days})});if(!r.ok)throw {code:r.status===403?"invalid_argument":"net"};}})};
-  UID=id;
-  const load=async()=>{try{const since=new Date(Date.now()-3*864e5).toISOString();
-    const r=await fetch(URL0+"/rest/v1/board?select=id,nick,days&order=updated.desc&limit=2000",{headers:H});
-    if(r.ok){BOARD=await r.json();dbState="ok";renderBoard();}}catch(e){}};
-  dbState="ok";
-  setTimeout(()=>{const st=document.getElementById("start");if(st&&!nick()){st.disabled=true;st.title="Pick a nickname first";}},0);
-  if(nick()&&Object.keys(store.get("rtf_hist",{})).length)pushScore();
-  await load();renderBoard();
-  setInterval(()=>{if(!document.hidden)load();},30000);
-  const p0=pushScore;pushScore=function(){p0();dbWrite.then(()=>setTimeout(load,400));};
+/* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
+const SB_URL="https://wrmjrtxrjterkuslwqjp.supabase.co",SB_KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
+let sb=null,ME=null,PROFILE=null,LEAGUES=[],SCOPE=store.get("rtf_scope","global"),TODAY_ROWS=[],ALLTIME=[],MEMBERS={},dbState="pending",boardMsg="";
+const READY=(async()=>{
+  try{
+    if(!window.supabase||!supabase.createClient){dbState="none";return;}
+    sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
+    const {data:{session}}=await sb.auth.getSession();
+    ME=session?session.user:null;
+    if(ME){await loadProfile();await syncToday();if(PROFILE&&store.get("rtf_hist",{})[todayKey()])pushScore();}
+    dbState="ok";
+    sb.auth.onAuthStateChange((ev,sess)=>{const was=ME&&ME.id;ME=sess?sess.user:null;if((ME&&ME.id)!==was)location.reload();});
+  }catch(e){dbState="none";}
 })();
+async function loadProfile(){
+  const {data}=await sb.from("profiles").select("name").eq("id",ME.id).maybeSingle();PROFILE=data||null;
+  if(PROFILE){await loadLeagues();await importLocal();await pendingJoin();}
+}
+async function loadLeagues(){
+  const {data}=await sb.from("league_members").select("league_id,leagues(id,name,code)").eq("user_id",ME.id);
+  LEAGUES=(data||[]).map(x=>x.leagues).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name));
+  if(SCOPE!=="global"&&!LEAGUES.some(l=>l.id===SCOPE))SCOPE="global";
+}
+/* today's attempt is kept on the server, so a second device cannot play again */
+async function syncToday(){
+  const k=todayKey(),{data}=await sb.from("results").select("km,correct,answered,done,log,started_at").eq("user_id",ME.id).eq("day",k).maybeSingle();
+  if(data){const all=store.get("rtf_hist",{});const loc=all[k];
+    if(!loc||(loc.answered||0)<=(data.answered||0))all[k]={km:data.km,correct:data.correct,answered:data.answered,done:true,day:dayNo()+1,log:data.log||undefined,at:Date.parse(data.started_at)};
+    else all[k].done=true;
+    store.set("rtf_hist",all);}
+}
+async function importLocal(){
+  if(store.get("rtf_imported_"+ME.id,false))return;
+  const h=store.get("rtf_hist",{}),days={};for(const k in h)if(k!==todayKey())days[k]={km:h[k].km,correct:h[k].correct,answered:h[k].answered};
+  try{if(Object.keys(days).length)await sb.rpc("import_history",{p_days:days});store.set("rtf_imported_"+ME.id,true);}catch(e){}
+}
+async function pendingJoin(){
+  const code=new URLSearchParams(location.search).get("join")||store.get("rtf_join","");
+  if(!code)return;store.set("rtf_join","");
+  const {data,error}=await sb.rpc("join_league",{p_code:code});
+  if(!error&&data&&data[0]){await loadLeagues();SCOPE=data[0].id;store.set("rtf_scope",SCOPE);boardMsg=`You joined <b>${esc(data[0].name)}</b>.`;}
+  else boardMsg="That league code did not work.";
+  history.replaceState(null,"",location.pathname);
+}
+{const c=new URLSearchParams(location.search).get("join");if(c)store.set("rtf_join",c.toUpperCase());}
+const signedIn=()=>!!(ME&&PROFILE);
+const nick=()=>PROFILE?PROFILE.name:"";
+async function signIn(){if(!sb)return;await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}});}
+async function signOut(){if(sb)await sb.auth.signOut();location.reload();}
+async function saveName(v){
+  v=(v||"").trim().replace(/\s+/g," ");
+  if(v.length<2||v.length>24)return "Name must be 2–24 characters.";
+  const {error}=await sb.from("profiles").upsert({id:ME.id,name:v});
+  if(error)return error.code==="23505"?"That name is taken, pick another one.":"Could not save the name.";
+  const first=!PROFILE;PROFILE={name:v};if(first){await loadProfile();await syncToday();pushScore();}return "";
+}
+/* called whenever the local attempt changes */
+let dbWrite=Promise.resolve();
+var pushScore=function(){
+  if(!sb||!signedIn())return;
+  const k=todayKey(),h=store.get("rtf_hist",{})[k];if(!h)return;
+  const row={user_id:ME.id,day:k,km:h.km||0,correct:h.correct||0,answered:h.answered||0,done:!!h.done,log:h.log||null,updated_at:new Date().toISOString()};
+  dbWrite=dbWrite.then(()=>sb.from("results").upsert(row,{onConflict:"user_id,day"})).then(()=>loadBoard()).catch(()=>{});
+};
+async function loadBoard(){
+  if(!sb)return;
+  try{
+    const k=todayKey();
+    const [t,a]=await Promise.all([sb.from("results").select("user_id,km,correct,done,profiles(name)").eq("day",k).limit(5000),sb.from("alltime").select("user_id,name,km,days").order("km",{ascending:false}).limit(5000)]);
+    if(!t.error)TODAY_ROWS=t.data||[];if(!a.error)ALLTIME=a.data||[];
+    if(SCOPE!=="global"&&!MEMBERS[SCOPE]){const {data}=await sb.from("league_members").select("user_id").eq("league_id",SCOPE);MEMBERS[SCOPE]=new Set((data||[]).map(x=>x.user_id));}
+    dbState="ok";
+  }catch(e){}
+  renderBoard();
+}
+function boardHtml(){
+  const tabs=`<div class="tabs"><button type="button" class="tab${SCOPE==="global"?" on":""}" data-sc="global">🌍 Everyone</button>${LEAGUES.map(l=>`<button type="button" class="tab${SCOPE===l.id?" on":""}" data-sc="${l.id}">${esc(l.name)}</button>`).join("")}${signedIn()?`<button type="button" class="tab add" id="lgadd">+ League</button>`:""}</div>`;
+  let h=`<div class="eyebrow" style="margin:0 0 6px">🏆 Leaderboard</div>${tabs}`;
+  if(boardMsg)h+=`<p class="rule" style="margin:6px 0">${boardMsg}</p>`;
+  if(!signedIn())h+=`<div class="signbox"><p class="rule" style="margin:0 0 8px">Sign in with Google to get on the leaderboard and play in leagues with your friends.</p><button type="button" class="gbtn" id="gsign">${GICON} Continue with Google</button></div>`;
+  if(dbState==="none")return h+`<p class="rule" style="margin:6px 0 0">The leaderboard is offline right now.</p>`;
+  const lg=SCOPE==="global"?null:LEAGUES.find(l=>l.id===SCOPE),mem=lg&&MEMBERS[lg.id],inScope=id=>!lg||(mem&&mem.has(id));
+  const meId=ME&&ME.id;
+  const rows=TODAY_ROWS.filter(r=>inScope(r.user_id)&&r.profiles).map(r=>({n:r.profiles.name,me:r.user_id===meId,t:r})).sort((a,b)=>b.t.km-a.t.km);
+  const row=(r,i)=>`<tr${r.me?' class="me"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
+  const mi=rows.findIndex(r=>r.me);
+  h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table><p class="rule" style="margin:6px 0 0">${mi>=0?`You are <b>${mi+1}.</b> of ${rows.length} today.`:`${rows.length} player${rows.length===1?"":"s"} today.`}</p>`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>`);
+  const at=ALLTIME.filter(x=>inScope(x.user_id)&&x.km>0).sort((a,b)=>b.km-a.km),ai=at.findIndex(x=>x.user_id===meId),md=["🥇","🥈","🥉"];
+  if(at.length)h+=`<div class="eyebrow sub">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.user_id===meId?' class="me"':""}><td>${md[i]} ${esc(x.name)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>${ai>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[ai].km.toLocaleString("en")} km</b> · <b>${ai+1}.</b> of ${at.length}</p>`:""}`;
+  if(lg){const link=location.origin+location.pathname+"?join="+lg.code;
+    h+=`<div class="lgbox"><div>Invite friends to <b>${esc(lg.name)}</b> · code <b class="code">${lg.code}</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin-top:6px"><button type="button" class="ghost" id="lgcopy" data-l="${esc(link)}">Copy invite link</button><button type="button" class="ghost" id="lgleave">Leave league</button></div></div>`;}
+  return h;
+}
+const GICON=`<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
+function renderBoard(){
+  const el=document.getElementById("boardcard");if(!el)return;el.hidden=false;el.innerHTML=boardHtml();
+  el.querySelectorAll(".tab[data-sc]").forEach(b=>b.onclick=()=>{SCOPE=b.dataset.sc;store.set("rtf_scope",SCOPE);boardMsg="";loadBoard();renderBoard();});
+  const g=el.querySelector("#gsign");if(g)g.onclick=signIn;
+  const add=el.querySelector("#lgadd");if(add)add.onclick=leagueForm;
+  const cp=el.querySelector("#lgcopy");if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(cp.dataset.l);cp.textContent="Link copied ✓";}catch(e){prompt("Copy this link:",cp.dataset.l);}};
+  const lv=el.querySelector("#lgleave");if(lv)lv.onclick=async()=>{if(!confirmLeave(lv))return;await sb.from("league_members").delete().eq("league_id",SCOPE).eq("user_id",ME.id);await loadLeagues();SCOPE="global";store.set("rtf_scope",SCOPE);boardMsg="You left the league.";loadBoard();};
+}
+function confirmLeave(b){if(b.dataset.sure)return true;b.dataset.sure="1";b.textContent="Tap again to leave";return false;}
+function leagueForm(){
+  const el=document.getElementById("boardcard");
+  el.innerHTML=`<div class="eyebrow" style="margin:0 0 6px">Leagues</div>
+  <p class="rule" style="margin:0 0 6px">Make a league and send the invite link to your friends, or join one with a code.</p>
+  <div class="row" style="justify-content:flex-start;gap:8px"><input id="lgname" maxlength="40" placeholder="New league name" style="flex:1;min-width:0"><button type="button" id="lgmake">Create</button></div>
+  <div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="lgcode" maxlength="6" placeholder="Code, e.g. 4F2A9C" style="flex:1;min-width:0;text-transform:uppercase"><button type="button" class="ghost" id="lgjoin">Join</button></div>
+  <div class="msg" id="lgmsg"></div><div class="row"><span></span><button type="button" class="ghost" id="lgback">Back</button></div>`;
+  const msg=document.getElementById("lgmsg");
+  document.getElementById("lgback").onclick=renderBoard;
+  document.getElementById("lgmake").onclick=async()=>{const n=document.getElementById("lgname").value.trim();if(n.length<2){msg.textContent="Give the league a name.";return;}
+    const {data,error}=await sb.rpc("create_league",{p_name:n});if(error||!data||!data[0]){msg.textContent="Could not create the league.";return;}
+    await loadLeagues();SCOPE=data[0].id;store.set("rtf_scope",SCOPE);boardMsg=`League <b>${esc(data[0].name)}</b> created. Send the invite link below to your friends.`;loadBoard();};
+  document.getElementById("lgjoin").onclick=async()=>{const c=document.getElementById("lgcode").value.trim().toUpperCase();if(!c){msg.textContent="Type the code.";return;}
+    const {data,error}=await sb.rpc("join_league",{p_code:c});if(error||!data||!data[0]){msg.textContent="No league with that code.";return;}
+    await loadLeagues();SCOPE=data[0].id;store.set("rtf_scope",SCOPE);boardMsg=`You joined <b>${esc(data[0].name)}</b>.`;loadBoard();};
+}
+/* header chip: who is signed in, change name, sign out */
+function renderMe(){
+  let el=document.getElementById("mechip");
+  if(!el){el=document.createElement("span");el.id="mechip";const hd=document.querySelector("header");if(!hd)return;hd.appendChild(el);}
+  if(signedIn())el.innerHTML=`<span class="who">👤 ${esc(PROFILE.name)}</span><button type="button" class="ghost" id="mename">Change name</button><button type="button" class="ghost" id="meout">Sign out</button>`;
+  else if(sb&&dbState==="ok")el.innerHTML=`<button type="button" class="gbtn sm" id="mein">${GICON} Sign in</button>`;
+  else el.innerHTML="";
+  const a=document.getElementById("mename"),o=document.getElementById("meout"),i=document.getElementById("mein");
+  if(o)o.onclick=signOut;if(i)i.onclick=signIn;
+  if(a)a.onclick=()=>{el.innerHTML=`<input id="mnew" maxlength="24" value="${esc(PROFILE.name)}" style="width:150px"><button type="button" class="ghost" id="msave">Save</button><button type="button" class="ghost" id="mcancel">Cancel</button><span id="merr" class="merr"></span>`;
+    document.getElementById("mcancel").onclick=renderMe;
+    document.getElementById("msave").onclick=async()=>{const e=await saveName(document.getElementById("mnew").value);if(e){document.getElementById("merr").textContent=e;return;}renderMe();renderBoard();loadBoard();};};
+}
+READY.then(()=>{renderMe();if(document.body.classList.contains("done"))loadBoard();setInterval(()=>{if(!document.hidden&&document.body.classList.contains("done"))loadBoard();},30000);});
+
 function renderStats(){const el=document.getElementById("statscard");if(el)el.innerHTML=histHtml();}
 function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort();if(!ks.length)return "";
   const km=ks.map(k=>h[k].km||0),best=Math.max(...km),avg=Math.round(km.reduce((a,b)=>a+b,0)/km.length),fin=km.filter(x=>x>=FINISH).length;
@@ -669,8 +766,7 @@ function intro(){
   <div class="row"><span></span><button type="button" id="start">${h?"Practice":"Start"}</button></div>`;
   renderBoard();
   const b=document.getElementById("start");
-  if(!nick()&&SDB){b.disabled=true;b.title="Pick a nickname in the leaderboard first";}
-  b.onclick=()=>{if(!nick()&&SDB){const n=document.getElementById("nick");if(n)n.focus();return;}const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1,at:Date.now()};store.set("rtf_hist",all);pushScore();}ask();};
+  b.onclick=()=>{const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1,at:Date.now()};store.set("rtf_hist",all);pushScore();}ask();};
   b.focus({preventScroll:true});
 }
 function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();travel(0,0);intro();}
@@ -688,9 +784,21 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
   bi.innerHTML=`<g id="lon">${londonLayers(false)}</g>`+`<g id="pin"><circle cx="256" cy="177" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="244" y="185" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Arsenal · London</text><circle cx="309" cy="265" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="297" y="273" text-anchor="end" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">PSG · Paris</text><circle cx="520" cy="286" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="532" y="294" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Bayern · Munich</text><circle cx="464" cy="375" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="476" y="383" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Inter · Milan</text><circle cx="306" cy="509" r="7" fill="#14213d" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="318" y="517" text-anchor="start" font-size="24" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#14213d" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">Barça · Barcelona</text><path transform="translate(177,540) scale(1.6)" d="M0-12L3-4L11.5-4L4.6 1.2L7.2 9.6L0 4.6L-7.2 9.6L-4.6 1.2L-11.5-4L-3-4Z" fill="#e8b600" stroke="#14213d" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="203" y="574" text-anchor="start" font-size="30" font-weight="800" font-family="Barlow Condensed,sans-serif" fill="#d62828" stroke="#fff" stroke-width="3" vector-effect="non-scaling-stroke" paint-order="stroke">FINAL · MADRID</text></g>`;
   const wide=innerWidth>900,V0=[wide?-830:-430,-380,1560,1150],V1=[0,15,700,655];
   const set=v=>bi.setAttribute("viewBox",v.map(n=>n.toFixed(2)).join(" "));set(V0);
-  const nb=document.getElementById("nickbox");if(nick())nb.style.display="none";
-  document.getElementById("go0").onclick=()=>{
-    if(!nick()){const i0=document.getElementById("nick0"),v=i0.value.trim();if(!v){i0.focus();i0.placeholder="Type a nickname first";i0.style.borderColor="var(--red)";return;}store.set("rtf_nick",v);pushScore();renderBoard();const st=document.getElementById("start");if(st){st.disabled=false;st.title="";}}
+  const nb=document.getElementById("nickbox");
+  const drawAuth=()=>{
+    if(signedIn())nb.innerHTML=`<div class="authok">Playing as <b>${esc(PROFILE.name)}</b></div>`;
+    else if(ME)nb.innerHTML=`<input id="nick0" maxlength="24" placeholder="Name other players will see" style="font-size:18px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;width:min(420px,80vw)"><div class="merr" id="nerr"></div>`;
+    else if(sb)nb.innerHTML=`<button type="button" class="gbtn big" id="g0">${GICON} Continue with Google</button><div class="guest">or press START to play as a guest (not on the leaderboard)</div>`;
+    else nb.innerHTML="";
+    const g=document.getElementById("g0");if(g)g.onclick=signIn;
+    const i0=document.getElementById("nick0");if(i0){i0.focus({preventScroll:true});i0.addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("go0").click();});}
+    else document.getElementById("go0").focus({preventScroll:true});};
+  READY.then(drawAuth);
+  let going=false;
+  document.getElementById("go0").onclick=async()=>{
+    if(going)return;going=true;await READY;
+    if(ME&&!PROFILE){const i0=document.getElementById("nick0"),er=document.getElementById("nerr");const e=await saveName(i0?i0.value:"");if(e){if(er)er.textContent=e;if(i0)i0.focus();going=false;return;}renderMe();}
+    if(store.get("rtf_hist",{})[todayKey()]){sp.remove();intro();return;}
     document.getElementById("sp").style.opacity="0";
     const pin=document.getElementById("pin"),t0=performance.now(),D=calm()?0:3000;
     const c0=[V0[0]+V0[2]/2,V0[1]+V0[3]/2],c1=[V1[0]+V1[2]/2,V1[1]+V1[3]/2];
@@ -702,8 +810,6 @@ document.getElementById("follow").onclick=function(){follow=!follow;this.textCon
       else{sp.style.opacity="0";setTimeout(()=>{sp.remove();const b=document.getElementById("start");if(b)b.click();},700);}};
     requestAnimationFrame(step);};
   document.getElementById("trow").innerHTML=TIERS.map((t,i)=>`<div class="tv"><svg viewBox="-15 -15 30 30" aria-hidden="true"><circle r="13" fill="#fff" stroke="#14213d" stroke-width="1.8"/>${i===6?`<clipPath id="rc"><circle r="12.1"/></clipPath><image href="${EIMG.ronaldo}" x="-12.1" y="-12.1" width="24.2" height="24.2" clip-path="url(#rc)" preserveAspectRatio="xMidYMid slice"/>`:VEH[i](["#c8102e","#ffffff"])}</svg><b>${t[1]} km</b><small>${t[2]}</small></div>`).join("");
-  if(!nick())document.getElementById("nick0").focus({preventScroll:true});else document.getElementById("go0").focus({preventScroll:true});
-  document.getElementById("nick0").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("go0").click();});
 })();
 
 </script>
