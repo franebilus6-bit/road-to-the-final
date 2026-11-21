@@ -1,1 +1,366 @@
-{"2026-11-21": [{"type": "player", "title": "Player who played for both Inter and Milan", "rule": "League appearances for both clubs, with each spell from 1995/96 onwards.", "a": {"Andrea Pirlo": 3640648, "Andrea Poli": 76547, "Andrés Guglielminpietro": 60568, "Antonio Cassano": 905784, "Christian Panucci": 406961, "Christian Vieri": 1642744, "Clarence Seedorf": 2960271, "Cristian Brocchi": 121970, "Dario Šimić": 187464, "Domenico Morfeo": 51763, "Edgar Davids": 2404472, "Francesco Acerbi": 1044464, "Francesco Coco": 136563, "Giampaolo Pazzini": 196099, "Giuseppe Favalli": 104974, "Hakan Çalhanoğlu": 1946300, "Hernán Crespo": 2072036, "Leonardo Bonucci": 1828910, "Mancini (Brazil)": 154451, "Mario Balotelli": 6651210, "Matteo Darmian": 972619, "Matías Silvestre": 33287, "Maurizio Ganz": 89448, "Patrick Vieira": 4098317, "Pierluigi Orlandini": 12414, "Roberto Baggio": 3924036, "Ronaldo (Brazil)": 17117979, "Sulley Muntari": 608905, "Taribo West": 553622, "Thomas Helveg": 118065, "Zlatan Ibrahimović": 19909761}}, {"type": "player", "title": "Scorer in a World Cup final since 1990", "rule": "Goals in normal or extra time; no shoot-outs, no own goals.", "a": {"Andreas Brehme": 690728, "Zinédine Zidane": 13868893, "Emmanuel Petit": 1172009, "Ronaldo (Brazil)": 17117979, "Marco Materazzi": 1297581, "Andrés Iniesta": 5697014, "Mario Götze": 2627321, "Antoine Griezmann": 8352524, "Paul Pogba": 9139739, "Kylian Mbappé": 39627548, "Ivan Perišić": 3313349, "Mario Mandžukić": 1457045, "Lionel Messi": 72708936, "Ángel Di María": 7342604, "Ferran Torres": 5631210}}, {"type": "club", "title": "Club that won the UEFA Cup or Europa League", "rule": "Since 1971/72; the Fairs Cup does not count.", "a": {"Tottenham": 17865772, "Liverpool": 26449840, "Feyenoord": 4098038, "Borussia Mönchengladbach": 2549369, "Juventus": 5966327, "PSV": 4762883, "Eintracht Frankfurt": 3470367, "Ipswich Town": 4679184, "IFK Göteborg": 666058, "Anderlecht": 217627, "Real Madrid": 28891662, "Bayer Leverkusen": 7247889, "Napoli": 4034728, "Inter": 11623850, "Ajax": 6981366, "Parma": 2169572, "Bayern Munich": 15277923, "Schalke": 3153564, "Galatasaray": 5071992, "Porto": 4302880, "Valencia": 3642483, "CSKA Moscow": 1153401, "Sevilla": 5008232, "Zenit": 1802532, "Shakhtar Donetsk": 3071254, "Atlético Madrid": 8180077, "Chelsea": 26566270, "Manchester United": 34479376, "Villarreal": 3808089, "Atalanta": 2806519, "Aston Villa": 10900775}}, {"type": "country", "title": "Nation that played in a Euro final", "rule": "Every final from 1960 to 2024.", "a": {"Soviet Union": 751708, "Yugoslavia": 919970, "Spain": 11605926, "Italy": 7469126, "Germany": 10049029, "Czechoslovakia": 577982, "Belgium": 5371419, "France": 12481809, "Netherlands": 7393955, "Denmark": 2979464, "Czech Republic": 2052124, "Greece": 2163898, "Portugal": 10316924, "England": 15542162}}, {"type": "coach", "title": "Manchester United manager since Sir Alex Ferguson", "rule": "From 2013 to today; caretakers and interim managers count.", "a": {"David Moyes": 4023757, "Ryan Giggs": 4627624, "Louis van Gaal": 2857691, "José Mourinho": 15410684, "Ole Gunnar Solskjær": 3865930, "Michael Carrick": 5439818, "Ralf Rangnick": 5382729, "Erik ten Hag": 8190588, "Ruud van Nistelrooy": 5652884, "Ruben Amorim": 2751974, "Darren Fletcher": 1721843, "Mauricio Pochettino": 7169439}}, {"type": "club", "title": "Club managed by José Mourinho", "rule": "Every club where he has been head coach, first team only.", "a": {"Benfica": 5669381, "União de Leiria": 395635, "Porto": 4302880, "Chelsea": 26566270, "Inter": 11623850, "Real Madrid": 28891662, "Manchester United": 34479376, "Tottenham": 17865772, "Roma": 3848250, "Fenerbahçe": 4925766}}, {"type": "year", "title": "Year Real Madrid won the European Cup or Champions League", "rule": "Type the year of the final, e.g. 2018.", "a": {"1956": 174917, "1957": 170829, "1958": 176153, "1959": 171576, "1960": 248396, "1966": 156909, "1998": 1000, "2000": 671211, "2002": 893216, "2014": 1590995, "2016": 1174651, "2017": 1280354, "2018": 1617776, "2022": 3459514, "2024": 2678908}}, {"type": "club", "title": "Club Zlatan Ibrahimović played for", "rule": "Senior clubs only.", "a": {"Malmö": 1231429, "Ajax": 6981366, "Juventus": 5966327, "Inter": 11623850, "Barcelona": 26356375, "Milan": 6641248, "PSG": 5103736, "Manchester United": 34479376, "LA Galaxy": 3059146}}]}
+{
+ "2026-11-21": [
+  {
+   "type": "player",
+   "title": "Player who played for both Inter and Milan",
+   "rule": "League appearances for both clubs, with each spell from 1995/96 onwards.",
+   "a": {
+    "Andrea Pirlo": 3640648,
+    "Andrea Poli": 76547,
+    "Andrés Guglielminpietro": 60568,
+    "Antonio Cassano": 905784,
+    "Christian Panucci": 406961,
+    "Christian Vieri": 1642744,
+    "Clarence Seedorf": 2960271,
+    "Cristian Brocchi": 121970,
+    "Dario Šimić": 187464,
+    "Domenico Morfeo": 51763,
+    "Edgar Davids": 2404472,
+    "Francesco Acerbi": 1044464,
+    "Francesco Coco": 136563,
+    "Giampaolo Pazzini": 196099,
+    "Giuseppe Favalli": 104974,
+    "Hakan Çalhanoğlu": 1946300,
+    "Hernán Crespo": 2072036,
+    "Leonardo Bonucci": 1828910,
+    "Mancini (Brazil)": 154451,
+    "Mario Balotelli": 6651210,
+    "Matteo Darmian": 972619,
+    "Matías Silvestre": 33287,
+    "Maurizio Ganz": 89448,
+    "Patrick Vieira": 4098317,
+    "Pierluigi Orlandini": 12414,
+    "Roberto Baggio": 3924036,
+    "Ronaldo (Brazil)": 17117979,
+    "Sulley Muntari": 608905,
+    "Taribo West": 553622,
+    "Thomas Helveg": 118065,
+    "Zlatan Ibrahimović": 19909761
+   }
+  },
+  {
+   "type": "player",
+   "title": "Scorer in a World Cup final since 1990",
+   "rule": "Goals in normal or extra time; no shoot-outs, no own goals.",
+   "a": {
+    "Andreas Brehme": 690728,
+    "Zinédine Zidane": 13868893,
+    "Emmanuel Petit": 1172009,
+    "Ronaldo (Brazil)": 17117979,
+    "Marco Materazzi": 1297581,
+    "Andrés Iniesta": 5697014,
+    "Mario Götze": 2627321,
+    "Antoine Griezmann": 8352524,
+    "Paul Pogba": 9139739,
+    "Kylian Mbappé": 39627548,
+    "Ivan Perišić": 3313349,
+    "Mario Mandžukić": 1457045,
+    "Lionel Messi": 72708936,
+    "Ángel Di María": 7342604,
+    "Ferran Torres": 5631210
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that won the UEFA Cup or Europa League",
+   "rule": "Since 1971/72; the Fairs Cup does not count.",
+   "a": {
+    "Tottenham": 17865772,
+    "Liverpool": 26449840,
+    "Feyenoord": 4098038,
+    "Borussia Mönchengladbach": 2549369,
+    "Juventus": 5966327,
+    "PSV": 4762883,
+    "Eintracht Frankfurt": 3470367,
+    "Ipswich Town": 4679184,
+    "IFK Göteborg": 666058,
+    "Anderlecht": 217627,
+    "Real Madrid": 28891662,
+    "Bayer Leverkusen": 7247889,
+    "Napoli": 4034728,
+    "Inter": 11623850,
+    "Ajax": 6981366,
+    "Parma": 2169572,
+    "Bayern Munich": 15277923,
+    "Schalke": 3153564,
+    "Galatasaray": 5071992,
+    "Porto": 4302880,
+    "Valencia": 3642483,
+    "CSKA Moscow": 1153401,
+    "Sevilla": 5008232,
+    "Zenit": 1802532,
+    "Shakhtar Donetsk": 3071254,
+    "Atlético Madrid": 8180077,
+    "Chelsea": 26566270,
+    "Manchester United": 34479376,
+    "Villarreal": 3808089,
+    "Atalanta": 2806519,
+    "Aston Villa": 10900775
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that played in a Euro final",
+   "rule": "Every final from 1960 to 2024.",
+   "a": {
+    "Soviet Union": 751708,
+    "Yugoslavia": 919970,
+    "Spain": 11605926,
+    "Italy": 7469126,
+    "Germany": 10049029,
+    "Czechoslovakia": 577982,
+    "Belgium": 5371419,
+    "France": 12481809,
+    "Netherlands": 7393955,
+    "Denmark": 2979464,
+    "Czech Republic": 2052124,
+    "Greece": 2163898,
+    "Portugal": 10316924,
+    "England": 15542162
+   }
+  },
+  {
+   "type": "coach",
+   "title": "Manchester United manager since Sir Alex Ferguson",
+   "rule": "From 2013 to today; caretakers and interim managers count.",
+   "a": {
+    "David Moyes": 4023757,
+    "Ryan Giggs": 4627624,
+    "Louis van Gaal": 2857691,
+    "José Mourinho": 15410684,
+    "Ole Gunnar Solskjær": 3865930,
+    "Michael Carrick": 5439818,
+    "Ralf Rangnick": 5382729,
+    "Erik ten Hag": 8190588,
+    "Ruud van Nistelrooy": 5652884,
+    "Ruben Amorim": 2751974,
+    "Darren Fletcher": 1721843,
+    "Mauricio Pochettino": 7169439
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club managed by José Mourinho",
+   "rule": "Every club where he has been head coach, first team only.",
+   "a": {
+    "Benfica": 5669381,
+    "União de Leiria": 395635,
+    "Porto": 4302880,
+    "Chelsea": 26566270,
+    "Inter": 11623850,
+    "Real Madrid": 28891662,
+    "Manchester United": 34479376,
+    "Tottenham": 17865772,
+    "Roma": 3848250,
+    "Fenerbahçe": 4925766
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year Real Madrid won the European Cup or Champions League",
+   "rule": "Type the year of the final, e.g. 2018.",
+   "a": {
+    "1956": 174917,
+    "1957": 170829,
+    "1958": 176153,
+    "1959": 171576,
+    "1960": 248396,
+    "1966": 156909,
+    "1998": 1000,
+    "2000": 671211,
+    "2002": 893216,
+    "2014": 1590995,
+    "2016": 1174651,
+    "2017": 1280354,
+    "2018": 1617776,
+    "2022": 3459514,
+    "2024": 2678908
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club Zlatan Ibrahimović played for",
+   "rule": "Senior clubs only.",
+   "a": {
+    "Malmö": 1231429,
+    "Ajax": 6981366,
+    "Juventus": 5966327,
+    "Inter": 11623850,
+    "Barcelona": 26356375,
+    "Milan": 6641248,
+    "PSG": 5103736,
+    "Manchester United": 34479376,
+    "LA Galaxy": 3059146
+   }
+  }
+ ],
+ "2026-11-22": [
+  {
+   "type": "player",
+   "title": "Player who wore number 7 for Manchester United",
+   "rule": "Squad number 7 in the Premier League era, from 1993/94 to today.",
+   "a": {
+    "Eric Cantona": 4221204,
+    "David Beckham": 27903808,
+    "Cristiano Ronaldo": 85085416,
+    "Michael Owen": 7327750,
+    "Antonio Valencia": 1278402,
+    "Ángel Di María": 7342604,
+    "Memphis Depay": 6225869,
+    "Alexis Sánchez": 4879389,
+    "Edinson Cavani": 4525572,
+    "Mason Mount": 5342888
+   }
+  },
+  {
+   "type": "player",
+   "title": "Player who played for both Barcelona and Real Madrid",
+   "rule": "First-team appearances for both clubs, any time from 1988 onwards.",
+   "a": {
+    "Bernd Schuster": 528491,
+    "Luis Milla": 186241,
+    "Miquel Soler": 38706,
+    "Michael Laudrup": 1427059,
+    "Alfonso Pérez": 126764,
+    "Julen Lopetegui": 2518766,
+    "Gheorghe Hagi": 1892496,
+    "Luis Enrique": 6657904,
+    "Robert Prosinečki": 689064,
+    "Dani García": 65638,
+    "Luís Figo": 4295477,
+    "Albert Celades": 120333,
+    "Ronaldo (Brazil)": 17117979,
+    "Samuel Eto'o": 4786103,
+    "Javier Saviola": 858761,
+    "Marcos Alonso": 2424309,
+    "Marc Cucurella": 5653925,
+    "Nando": 17653
+   }
+  },
+  {
+   "type": "player",
+   "title": "European Golden Shoe winner",
+   "rule": "Every winner from 1999/2000 to 2025/26, shared awards included.",
+   "a": {
+    "Kevin Phillips": 482593,
+    "Henrik Larsson": 2452226,
+    "Mário Jardel": 682175,
+    "Roy Makaay": 920203,
+    "Thierry Henry": 12773832,
+    "Diego Forlán": 2868398,
+    "Luca Toni": 1187877,
+    "Francesco Totti": 3311004,
+    "Cristiano Ronaldo": 85085416,
+    "Lionel Messi": 72708936,
+    "Luis Suárez": 11482546,
+    "Ciro Immobile": 2295910,
+    "Robert Lewandowski": 15147457,
+    "Erling Haaland": 38315469,
+    "Harry Kane": 24273104,
+    "Kylian Mbappé": 39627548
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that won the Copa América",
+   "rule": "Every edition from 1916 to 2024.",
+   "a": {
+    "Uruguay": 5020822,
+    "Argentina": 17360569,
+    "Brazil": 14872978,
+    "Paraguay": 1812424,
+    "Peru": 1338667,
+    "Bolivia": 1084757,
+    "Colombia": 3193976,
+    "Chile": 1739506
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that has been champion of France",
+   "rule": "Ligue 1 (Division 1) titles from 1990/91 to today.",
+   "a": {
+    "Marseille": 4795797,
+    "Paris Saint-Germain": 13431001,
+    "Nantes": 1265805,
+    "Auxerre": 926508,
+    "Monaco": 4591091,
+    "Lens": 2271932,
+    "Bordeaux": 2265371,
+    "Lyon": 3955657,
+    "Lille": 3154374,
+    "Montpellier": 1011821
+   }
+  },
+  {
+   "type": "coach",
+   "title": "Manager who won the European Championship",
+   "rule": "Head coach of every Euro winner, 1960 to 2024.",
+   "a": {
+    "Gavriil Kachalin": 18453,
+    "José Villalonga": 23693,
+    "Ferruccio Valcareggi": 38143,
+    "Helmut Schön": 151250,
+    "Václav Ježek": 17585,
+    "Jupp Derwall": 78017,
+    "Michel Hidalgo": 61745,
+    "Rinus Michels": 627901,
+    "Richard Møller Nielsen": 58669,
+    "Berti Vogts": 357629,
+    "Roger Lemerre": 132569,
+    "Otto Rehhagel": 443290,
+    "Luis Aragonés": 506534,
+    "Vicente del Bosque": 1204198,
+    "Fernando Santos": 1040291,
+    "Roberto Mancini": 2468471,
+    "Luis de la Fuente": 2760381
+   }
+  },
+  {
+   "type": "player",
+   "title": "Player managed by both Sir Alex Ferguson and José Mourinho",
+   "rule": "Competitive first-team appearances under both managers.",
+   "a": {
+    "Cristiano Ronaldo": 85085416,
+    "Wayne Rooney": 12213622,
+    "Michael Carrick": 5439818,
+    "Antonio Valencia": 1278402,
+    "Ashley Young": 3362998,
+    "Chris Smalling": 1721926,
+    "Phil Jones": 2526643,
+    "David de Gea": 5959556,
+    "Paul Pogba": 9139739
+   }
+  },
+  {
+   "type": "stadium",
+   "title": "Stadium that hosted a Champions League final",
+   "rule": "Every final from 1992/93 to 2025/26.",
+   "a": {
+    "Olympiastadion Munich": 603914,
+    "Olympic Stadium Athens": 570091,
+    "Ernst Happel Stadium": 391807,
+    "Stadio Olimpico": 1149444,
+    "Johan Cruyff Arena": 866891,
+    "Camp Nou": 3585575,
+    "Stade de France": 2414542,
+    "San Siro": 2845627,
+    "Hampden Park": 1094703,
+    "Old Trafford": 2518312,
+    "Atatürk Olympic Stadium": 1064418,
+    "Luzhniki Stadium": 786279,
+    "Santiago Bernabéu": 2684642,
+    "Wembley": 4680703,
+    "Allianz Arena": 1610088,
+    "Estádio da Luz": 804104,
+    "Olympiastadion Berlin": 1737856,
+    "Millennium Stadium": 1203741,
+    "Olimpiyskiy Stadium Kyiv": 416780,
+    "Metropolitano": 1500134,
+    "Estádio do Dragão": 499523,
+    "Puskás Aréna": 1125684,
+    "Arena AufSchalke": 650656
+   }
+  }
+ ]
+}
