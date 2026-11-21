@@ -214,7 +214,13 @@ body.playing #mechip{display:none}
 .lgitem .code{font-family:monospace;letter-spacing:2px;background:var(--paper);padding:1px 6px;border-radius:4px;font-size:13px}
 .lgitem button{font-size:13px;padding:5px 10px}
 .pastt tr{cursor:pointer}.pastt tr:hover{background:rgba(46,139,58,.1)}
-.howcard{padding:0!important;border:none!important;background:none!important;box-shadow:none!important}.howcard details{background:var(--paper)}</style>
+.howcard{padding:0!important;border:none!important;background:none!important;box-shadow:none!important}.howcard details{background:var(--paper)}.rkt{float:right;font-weight:800;letter-spacing:0}.rkt.full{color:var(--red)}
+.crash{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:#d62828;color:#fff;font-weight:700;animation:crashin .5s ease}
+.warn4{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:#ffd60a;color:#14213d;font-weight:700}
+@keyframes crashin{0%{transform:scale(.6) rotate(-4deg);opacity:0}60%{transform:scale(1.06) rotate(1deg);opacity:1}100%{transform:none}}
+.same{margin-top:6px;font-size:15px;opacity:.85}
+.streak{display:inline-block;margin:8px 0 2px;padding:6px 12px;border-radius:999px;background:#fff3cd;border:2px solid #14213d;font-size:16px}
+</style>
 </head>
 <body>
 <div id="splash"><svg id="bi" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="sp" id="sp"><h1>Road to <span style="color:#ffd60a;text-shadow:0 3px 0 #14213d,0 -2px 0 #14213d,3px 0 0 #14213d,-3px 0 0 #14213d,0 0 2px #14213d">the Final</span></h1><p>Five champions. Five grounds. One road to the Champions League final.</p><div id="nickbox"><span class="rule">Connecting…</span></div><button type="button" id="go0">START</button><div class="rules"><p class="r1"><b>8 football questions a day.</b> Type a correct answer to travel from London to the <b>Champions League final in Madrid</b>.</p><div class="trow" id="trow"></div><div class="tarrow"><span>rarer answer</span></div><p class="r2"><b>Rarer answer = more km. Faster answer = bonus.</b> Wrong answer = 0 km. Reach Madrid and the extra kilometres keep you rolling on to Lisbon as a bonus.</p></div></div></div>
@@ -239,7 +245,7 @@ body.playing #mechip{display:none}
     <details style="margin:0">
       <summary>How scoring works</summary>
       <table><tr><td>more than 30% of players</td><td>Scooter</td><td class="n">35 km</td></tr><tr><td>15–30%</td><td>Night bus</td><td class="n">85 km</td></tr><tr><td>8–15%</td><td>Bullet train</td><td class="n">150 km</td></tr><tr><td>4–8%</td><td>ultras' convoy</td><td class="n">240 km</td></tr><tr><td>2–4%</td><td>Budget flight</td><td class="n">340 km</td></tr><tr><td>1–2%</td><td>Private jet</td><td class="n">425 km</td></tr><tr><td>less than 1%</td><td>SIUUU launch</td><td class="n">620 km</td></tr></table>
-      <p class="note">You get 5 seconds to read each question and 25 to answer. A wrong answer or running out of time scores 0 km. The road ends at the final in Madrid (3,400 km); every kilometre past it is bonus that carries you on to Benfica's Estádio da Luz in Lisbon. Rarity comes from real English Wikipedia page views over the last five years (Nov 2021 to Oct 2026): 40% from the square root of views, 60% from simulated players who answer in proportion to views. There are no real players yet.</p>
+      <p class="note">You get 5 seconds to read each question and 25 to answer. A wrong answer or running out of time scores 0 km. The road ends at the final in Madrid (3,400 km); every kilometre past it is bonus that carries you on to Benfica's Estádio da Luz in Lisbon. Rarity comes from real English Wikipedia page views over the last five years (Nov 2021 to Oct 2026): 40% from the square root of views, 60% from simulated players who answer in proportion to views. <b>Rocket limit:</b> only 4 SIUUU launches count each day; every SIUUU after the fourth crashes you back to 0 km.</p>
     </details>
   </div>
   </div>
@@ -542,7 +548,8 @@ function ask(){
   if(!follow){follow=true;setBall(shown);}
   clearTimeout(autoNext);document.body.classList.toggle("playing",true);document.body.classList.toggle("done",false);
   const c=CATS[idx],t=TYPE[c.type],yr=c.type==="year";
-  stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
+  const rk=rocketsUsed();
+  stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}<span class="rkt${rk>=MAXR?" full":""}">🚀 ${rk}/${MAXR}</span></div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
   <div class="timer" id="timer"><span id="tlabel">Read</span><div class="tbar"><i id="tfill"></i></div><b id="tnum">5</b></div>
   <form id="f" autocomplete="off"><input id="answer" type="${yr?"number":"text"}" ${yr?'inputmode="numeric" min="1930" max="2026"':'autocapitalize="words" spellcheck="false"'} placeholder="${t.ph}" aria-label="${t.ph}"><button type="submit" id="send">Check</button></form>
   <div class="msg" id="msg"></div><div id="picks"></div>
@@ -574,23 +581,35 @@ let ansStart=0,lastMult=1,lastSec=0;
 const SPEED=[[3,1.3],[6,1.2],[10,1.1],[15,1],[20,.9],[99,.8]];
 const speedMult=sec=>{for(const [t,m] of SPEED)if(sec<=t)return m;return .8;};
 let autoNext=0;
+const MAXR=4;
+const rocketsUsed=()=>log.filter(x=>x.ti===6).length;
+/* what share of today's signed-in players gave the same answer */
+let SAME=null;
+async function loadSame(){if(!sb)return;try{const {data}=await sb.from("results").select("user_id,log").eq("day",GAME_KEY||todayKey()).limit(5000);SAME=(data||[]).filter(r=>!(ME&&r.user_id===ME.id)).map(r=>r.log||[]);}catch(e){}}
+function sameText(title,label){if(!SAME)return "";const ans=SAME.map(l=>l.find(e=>e&&e.t===title)).filter(Boolean);
+  if(ans.length<3)return ans.some(e=>e.l===label)?"👥 Someone else said this too.":"🦄 Nobody else has said this today.";
+  const n=ans.filter(e=>e.l===label).length;if(!n)return "🦄 Nobody else has said this today.";
+  const p=Math.round(n/ans.length*100);return `👥 <b>${p<1?"<1":p}%</b> of players said the same.`;}
 function lock(name,label,why){
   stopTimer();
   const c=CATS[idx],ok=name!==null&&Object.prototype.hasOwnProperty.call(c.a,name);
   let km=0,tr=null,sh=0;
   lastSec=ansStart?(performance.now()-ansStart)/1000:25;lastMult=speedMult(lastSec);
   if(ok){sh=share(c,name);tr=tierFor(c,name);km=Math.round(tr[1]*lastMult);vehicle(TIERS.indexOf(tr));}
-  total+=km;log.push({title:c.title,label,ok,km,tr:tr?tr[2]:"",ti:ok?TIERS.indexOf(tr):-1});
-  {const ti=ok?TIERS.indexOf(tr):-1;if(ti===6)kick(()=>travel(total,DUR[6]));else travel(total,ok?DUR[ti]:0);}
+  const tiN=ok?TIERS.indexOf(tr):-1,before=rocketsUsed(),crash=tiN===6&&before>=MAXR;
+  if(crash)total=0;else total+=km;
+  log.push({title:c.title,label,ok,km,tr:tr?tr[2]:"",ti:tiN,r:crash?1:0});
+  if(tiN===6)kick(()=>travel(total,crash?1800:DUR[6]));else travel(total,ok?DUR[tiN]:0);
+  const rkNote=crash?`<div class="crash">💥 Rocket overload! That was SIUUU number ${before+1}, and only ${MAXR} count. You crash back to <b>0 km</b>.</div>`:tiN===6&&before+1===MAXR?`<div class="warn4">⚠️ ${MAXR}/${MAXR} rockets used. One more SIUUU today and you crash back to 0 km.</div>`:"";
   const top=mostCommon(c),last=idx===CATS.length-1;
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div>
   <div class="verdict ${ok?"ok":"no"}">${ok?(isJoker(c,name)?"Correct · JOKER!":"Correct"):why==="time"?"Out of time":why==="skip"?"Skipped":"Wrong"}</div>${ok&&isJoker(c,name)?`<div class="joker">Cult pick! Joker answers always launch SIUUU, however many players give them.</div>`:""}
   <div>${name===null?"":"<b>"+esc(label)+"</b>"+(ok?"":" is not on the list.")}</div>
-  <div class="row" style="justify-content:flex-start;gap:14px;margin-top:8px"><div class="plus">+${km}<span style="font-size:22px"> km</span></div>${ok?`<span class="chip" style="background:${tr[3]}">${esc(tr[2])}</span>`:""}</div>${ok&&lastMult!==1?`<div class="speed ${lastMult>1?"fast":"slow"}">${lastMult>1?"Speed bonus ⚡ ×"+lastMult.toFixed(1):"Too slow 🐢 ×"+lastMult.toFixed(1)}</div>`:""}
+  <div class="row" style="justify-content:flex-start;gap:14px;margin-top:8px"><div class="plus">${crash?"0":"+"+km}<span style="font-size:22px"> km</span></div>${ok?`<span class="chip" style="background:${tr[3]}">${esc(tr[2])}</span>`:""}</div>${rkNote}${ok?`<div class="same" id="same">${sameText(c.title,label)}</div>`:""}${ok&&!crash&&lastMult!==1?`<div class="speed ${lastMult>1?"fast":"slow"}">${lastMult>1?"Speed bonus ⚡ ×"+lastMult.toFixed(1):"Too slow 🐢 ×"+lastMult.toFixed(1)}</div>`:""}
   <div class="row"><span></span><button type="button" id="go">${last?"End of the road":"Next"}</button></div>`;
   const go=document.getElementById("go");go.focus({preventScroll:true});
   const nxt=()=>{clearTimeout(autoNext);idx++;if(idx<CATS.length)ask();else finish();};
-  go.onclick=nxt;autoNext=setTimeout(nxt,ok&&TIERS.indexOf(tr)===6?3200:2400);
+  go.onclick=nxt;autoNext=setTimeout(nxt,crash?4600:rkNote?4000:ok&&tiN===6?3200:2400);
 }
 function finish(){
   follow=false;
@@ -601,7 +620,9 @@ function finish(){
   const line=`Road to the Final #${dayNo()+1}: ${total} km, ${done?"reached the final in Madrid"+(total>FINISH?" and "+(total-FINISH)+" km beyond":""):"stopped at "+t.n}. ${log.filter(x=>x.ok).length}/8 correct.`;
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
-  <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.km} km</td></tr>`).join("")}</table>
+  <div id="streak"></div>
+  <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok&&!x.r?"var(--grass)":"var(--red)"}">${x.r?"💥 back to 0":x.km+" km"}</td></tr>`).join("")}</table>
+  <p class="rule" style="margin-top:8px">Next quiz in <b class="cdclock">${clock()}</b></p>
   <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="copy">Share</button><button type="button" class="ghost" id="replay">▶ Replay route</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button><button type="button" class="ghost" id="past">📅 Past days</button></div><div class="msg" id="msg"></div><p class="rule" style="margin-top:8px">${wasRanked?"✅ Saved as today's result. Come back tomorrow for a new set.":""}</p>`;
   renderBoard();
     document.getElementById("bestbtn").onclick=()=>best();
@@ -609,17 +630,18 @@ function finish(){
   document.getElementById("replay").onclick=()=>replayRoute(rl,rt);
   document.getElementById("past").onclick=()=>pastList(finish);
   clearTimeout(replayT);replayT=setTimeout(()=>replayRoute(rl,rt),1800);
-  document.getElementById("copy").onclick=e=>shareResult(shareText(total,log.filter(x=>x.ok).length,log.map(x=>x.km)),e.currentTarget);
+  document.getElementById("copy").onclick=e=>shareResult(shareText(total,log.filter(x=>x.ok).length,log.map(x=>({ti:x.ti,r:x.r}))),e.currentTarget);
+  startClock();showStreak();
 }
 /* ---------- route replay: the whole trip on the full map, one vehicle after another ---------- */
 let replayT=0;
 const tierFromKm=k=>k<=46?0:k<=111?1:k<=195?2:k<=312?3:k<=442?4:k<=553?5:6;
 function replayRoute(kms,tiers){
   clearTimeout(replayT);cancelAnimationFrame(anim);follow=false;
-  const steps=(kms||[]).map((k,j)=>({k,t:tiers&&tiers[j]!=null&&tiers[j]>=0?tiers[j]:tierFromKm(k)})).filter(x=>x.k>0);
+  let rc=0;const steps=(kms||[]).map((k,j)=>{const t=tiers&&tiers[j]!=null&&tiers[j]>=0?tiers[j]:tierFromKm(k);const crash=tiers&&tiers[j]===6&&++rc>MAXR;return {k,t,crash};}).filter(x=>x.k>0);
   shown=0;vehicle(0);setBall(0);hud(0);document.getElementById("km").textContent="0";
   let cum=0,i=0;
-  const next=()=>{if(i>=steps.length){hud(cum);return;}const st=steps[i++];cum+=st.k;vehicle(st.t);const d=Math.min(1500,550+st.k);travel(cum,d);replayT=setTimeout(next,d+300);};
+  const next=()=>{if(i>=steps.length){hud(cum);return;}const st=steps[i++];cum=st.crash?0:cum+st.k;vehicle(st.t);const d=Math.min(1500,550+st.k);travel(cum,d);replayT=setTimeout(next,d+300);};
   replayT=setTimeout(next,500);
 }
 /* ---------- past days: view only ---------- */
@@ -649,13 +671,15 @@ async function pastDay(n,back){
   const {data}=await sb.from("results").select("user_id,km,correct,profiles(name)").eq("day",k).order("km",{ascending:false}).limit(500);
   const rows=(data||[]).filter(r=>r.profiles),meId=ME&&ME.id,mi=rows.findIndex(r=>r.user_id===meId);
   const row=(r,i)=>`<tr${r.user_id===meId?' class="me"':""}><td>${i+1}. ${esc(r.profiles.name)}</td><td>${r.correct}/8</td><td class="n">${r.km} km${r.km>=FINISH?" 🏆":""}</td></tr>`;
-  const pb=document.getElementById("pboard");if(pb)pb.innerHTML=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table><p class="rule" style="margin:6px 0 0">${rows.length} player${rows.length===1?"":"s"} that day.</p>`:`<p class="rule">Nobody signed in played that day.</p>`;
+  const pb=document.getElementById("pboard");if(pb)pb.innerHTML=rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>`:`<p class="rule">Nobody signed in played that day.</p>`;
 }
 function shareText(km,correct,list){
-  const em=k=>k<=0?"❌":k<=50?"🛵":k<=110?"🚌":k<=190?"🚄":k<=300?"🚩":k<=440?"🛫":k<=550?"🛩️":"🚀";
+  const EM=["🛴","🚌","🚄","🚐","✈️","🛩️","🚀"];
+  const grid=(list||[]).map(x=>x&&x.r?"💥":x&&x.ti>=0?EM[x.ti]:"⬜").join("");
   const lg=typeof SCOPE!=="undefined"&&SCOPE!=="global"&&typeof LEAGUES!=="undefined"?LEAGUES.find(l=>l.id===SCOPE):null;
-  const url=location.origin+location.pathname+(lg?"?join="+lg.code:"");
-  return `Road to the Final #${dayNo()+1} ⚽\n${km} km · ${correct}/8${km>=FINISH?" 🏆 reached the final!":""}\n${list.map(em).join("")}\n${lg?"Join my league "+lg.name+": ":""}${url}`;}
+  const url=location.host+location.pathname.replace(/\/$/,"")+(lg?"?join="+lg.code:"");
+  const st=streakNow();
+  return `Road to the Final #${dayNo()+1} ⚽\n${grid}\n${km.toLocaleString("en")} km · ${correct}/8${km>=FINISH?" 🏆":""}${st>1?" · 🔥"+st:""}\n${lg?"Join my league "+lg.name+": ":""}${url}`;}
 async function shareResult(txt,btn){
   try{if(navigator.share){await navigator.share({text:txt});return;}}catch(e){if(e&&e.name==="AbortError")return;}
   try{await navigator.clipboard.writeText(txt);btn.textContent="Copied ✓";setTimeout(()=>btn.textContent="Share",2000);}catch(e){prompt("Copy your result:",txt);}}
@@ -680,12 +704,20 @@ const DAY0=new Date(2026,10,20);
 const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const dayNo=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((m-DAY0)/864e5);};
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
-let ranked=false;
+let ranked=false,GAME_KEY=null,GAME_DAY=null;
+const PAGE_DAY=todayKey();
+/* a running game in one tab must not be locked by another tab; a reload mid-game still ends the attempt */
+let liveT=0;
+function liveOn(){clearInterval(liveT);const w=()=>store.set("rtf_live",{k:GAME_KEY,ts:Date.now()});w();liveT=setInterval(w,2000);}
+function liveOff(){clearInterval(liveT);liveT=0;store.set("rtf_live",null);}
+const otherTabPlaying=k=>{const l=store.get("rtf_live",null);return !!(l&&l.k===k&&Date.now()-l.ts<7000);};
+/* a page left open past midnight reloads itself onto the new set, unless a game is in progress */
+setInterval(()=>{if(todayKey()!==PAGE_DAY&&!ranked&&!document.body.classList.contains("playing"))location.reload();},20000);
 /* daily sets added after launch live in the "data" branch on GitHub (sets.json, keyed by date), so a new set needs no new deploy */
 let REMOTE_SETS={};
 const SETS_READY=Promise.race([fetch("https://raw.githubusercontent.com/franebilus6-bit/road-to-the-final/data/sets.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(j=>{if(j&&typeof j==="object")REMOTE_SETS=j;}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
 function pickDaily(){const d=dayNo(),r=REMOTE_SETS[todayKey()];CATS=(Array.isArray(r)&&r.length===8&&r)||(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
-function saveRanked(fin){const h=store.get("rtf_hist",{}),k=todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok,ti:x.ti}))};store.set("rtf_hist",h);pushScore();}
+function saveRanked(fin){const h=store.get("rtf_hist",{}),k=GAME_KEY||todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:GAME_DAY||dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok,ti:x.ti,r:x.r||0}))};store.set("rtf_hist",h);pushScore(k);if(fin)liveOff();}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 /* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
 const SB_URL="https://wrmjrtxrjterkuslwqjp.supabase.co",SB_KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
@@ -697,10 +729,13 @@ const READY=(async()=>{
     const {data:{session}}=await sb.auth.getSession();
     ME=session?session.user:null;
     if(ME){await loadProfile();await syncToday();if(PROFILE&&store.get("rtf_hist",{})[todayKey()])pushScore();}
-    dbState="ok";
+    dbState="ok";logVisit();
     sb.auth.onAuthStateChange((ev,sess)=>{const was=ME&&ME.id;ME=sess?sess.user:null;if((ME&&ME.id)!==was)location.reload();});
   }catch(e){dbState="none";}
 })();
+/* private visit counter: one row per browser per day, write-only for the public (nobody can read it through the site) */
+async function logVisit(){try{const k=todayKey();if(store.get("rtf_vday","")===k)return;let v=store.get("rtf_vid","");if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2));store.set("rtf_vid",v);}
+  const {error}=await sb.from("visits").insert({day:k,vid:v},{returning:"minimal"});if(!error||error.code==="23505")store.set("rtf_vday",k);}catch(e){}}
 async function loadProfile(){
   const {data}=await sb.from("profiles").select("name").eq("id",ME.id).maybeSingle();PROFILE=data||null;
   if(PROFILE){await loadLeagues();await importLocal();await pendingJoin();}
@@ -745,9 +780,9 @@ async function saveName(v){
 }
 /* called whenever the local attempt changes */
 let dbWrite=Promise.resolve();
-var pushScore=function(){
+var pushScore=function(key){
   if(!sb||!signedIn())return;
-  const k=todayKey(),all=store.get("rtf_hist",{}),h=all[k];if(!h||(h.done&&h.synced===ME.id))return;
+  const k=key||GAME_KEY||todayKey(),all=store.get("rtf_hist",{}),h=all[k];if(!h||(h.done&&h.synced===ME.id))return;
   const row={user_id:ME.id,day:k,km:h.km||0,correct:h.correct||0,answered:h.answered||0,done:!!h.done,log:h.log||null,updated_at:new Date().toISOString()};
   dbWrite=dbWrite.then(()=>sb.from("results").upsert(row,{onConflict:"user_id,day"})).then(r=>{if(row.done&&(!r.error||r.status===403)){const a2=store.get("rtf_hist",{});if(a2[k]){a2[k].synced=ME.id;store.set("rtf_hist",a2);}}loadBoard();}).catch(()=>{});
 };
@@ -762,6 +797,9 @@ async function loadBoard(){
   }catch(e){}
   renderBoard();
 }
+function guestRank(){if(signedIn())return "";const h=store.get("rtf_hist",{})[todayKey()];if(!h||!h.done)return "";
+  const pos=TODAY_ROWS.filter(r=>r.profiles&&r.km>h.km).length+1;
+  return `<p class="rule" style="margin:6px 0 0">🔒 With <b>${h.km} km</b> you'd be <b>${pos}.</b> today. Sign in with Google to get on the board.</p>`;}
 function boardHtml(){
   const tabs=`<div class="tabs"><button type="button" class="tab${SCOPE==="global"?" on":""}" data-sc="global">🌍 Everyone</button>${LEAGUES.map(l=>`<button type="button" class="tab${SCOPE===l.id?" on":""}" data-sc="${l.id}">${esc(l.name)}</button>`).join("")}${signedIn()?`<button type="button" class="tab add" id="lgadd">+ League</button>`:""}</div>`;
   let h=`<div class="eyebrow" style="margin:0 0 6px">🏆 Leaderboard</div>${tabs}`;
@@ -774,9 +812,9 @@ function boardHtml(){
   const rows=TODAY_ROWS.filter(r=>inScope(r.user_id)&&r.profiles).map(r=>({n:r.profiles.name,me:r.user_id===meId,t:r})).sort((a,b)=>b.t.km-a.t.km);
   const row=(r,i)=>`<tr${r.me?' class="me"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
   const mi=rows.findIndex(r=>r.me);
-  h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table><p class="rule" style="margin:6px 0 0">${mi>=0?`You are <b>${mi+1}.</b> of ${rows.length} today.`:`${rows.length} player${rows.length===1?"":"s"} today.`}</p>`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>`);
+  h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> today.</p>`:guestRank()}`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>${guestRank()}`);
   const at=ALLTIME.filter(x=>inScope(x.user_id)&&x.km>0).sort((a,b)=>b.km-a.km),ai=at.findIndex(x=>x.user_id===meId),md=["🥇","🥈","🥉"];
-  if(at.length)h+=`<div class="eyebrow sub">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.user_id===meId?' class="me"':""}><td>${md[i]} ${esc(x.name)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>${ai>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[ai].km.toLocaleString("en")} km</b> · <b>${ai+1}.</b> of ${at.length}</p>`:""}`;
+  if(at.length)h+=`<div class="eyebrow sub">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.user_id===meId?' class="me"':""}><td>${md[i]} ${esc(x.name)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>${ai>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[ai].km.toLocaleString("en")} km</b> · <b>${ai+1}.</b></p>`:""}`;
   if(lg){const link=location.origin+location.pathname+"?join="+lg.code;
     h+=`<div class="lgbox"><div>Invite friends to <b>${esc(lg.name)}</b> · code <b class="code">${lg.code}</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin-top:6px"><button type="button" class="ghost" id="lgcopy" data-l="${esc(link)}">Copy invite link</button><button type="button" class="ghost" id="lgleave">Leave league</button></div></div>`;}
   return h;
@@ -877,6 +915,14 @@ function histHtml(){const h=store.get("rtf_hist",{}),ks=Object.keys(h).sort();if
   <div class="bars">${last.map(k=>{const v=h[k].km||0,dd=k.split("-");const p=Math.max(3,v/mx*100);return `<div class="bc" title="${dd[2]}.${dd[1]}. · ${v} km · ${h[k].correct}/8"><div class="bw"><div class="fl" style="bottom:${(FINISH/mx*100).toFixed(1)}%"></div><i style="height:${p.toFixed(1)}%;background:${v>=FINISH?"var(--red)":k===todayKey()?"#ffd60a":"var(--grass)"}"><span class="bv">${v}</span></i></div><small>${+dd[2]}.${+dd[1]}.</small></div>`}).join("")}</div><div class="rule" style="margin:4px 0 0;font-size:12px">Last ${last.length} day${last.length===1?"":"s"} · dashed line = the final (3400 km)</div></div>`;}
 function untilMidnight(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1);const mins=Math.max(0,Math.round((m-n)/6e4));return Math.floor(mins/60)+" h "+(mins%60)+" min";}
 let cdTimer=0;
+function clock(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1);let t=Math.max(0,Math.floor((m-n)/1000));const p=x=>String(x).padStart(2,"0");return p(Math.floor(t/3600))+":"+p(Math.floor(t/60)%60)+":"+p(t%60);}
+function startClock(){clearInterval(cdTimer);cdTimer=setInterval(()=>{const c=document.querySelectorAll(".cdclock");if(!c.length){clearInterval(cdTimer);return;}c.forEach(e=>e.textContent=clock());},1000);}
+/* streak: consecutive days played up to today (or yesterday), from this browser plus the account */
+let SERVER_DAYS=null;
+function keyOf(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function streakNow(){const h=store.get("rtf_hist",{}),has=k=>!!h[k]||(SERVER_DAYS&&SERVER_DAYS.has(k));const d=new Date();if(!has(keyOf(d)))d.setDate(d.getDate()-1);let n=0;while(has(keyOf(d))){n++;d.setDate(d.getDate()-1);}return n;}
+async function showStreak(){const draw=()=>{const el=document.getElementById("streak");if(!el)return;const n=streakNow();el.innerHTML=n>=1?`<div class="streak">🔥 <b>${n}-day streak</b>${n>1?"":" · come back tomorrow to keep it going"}</div>`:"";};draw();
+  if(sb&&signedIn()&&!SERVER_DAYS){try{const {data}=await sb.from("results").select("day").eq("user_id",ME.id).limit(1000);SERVER_DAYS=new Set((data||[]).map(r=>r.day));draw();}catch(e){}}}
 function resultView(h){
   setTimeout(renderStats,0);
   document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
@@ -884,21 +930,23 @@ function resultView(h){
   const d=new Date(),done=h.km>=FINISH,r=reached(h.km),t=ST[r];
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}. · already played</div><h2>${done?"You reached the final today 🏆":"Today's result"}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
-  ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok?"var(--grass)":"var(--red)"}">${x.k} km</td></tr>`).join("")}</table>`:""}
-  <p class="rule" style="margin-top:8px">Next set in <b id="cd">${untilMidnight()}</b>. One attempt per day. Come back tomorrow for a new set!</p>
+  ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok&&!x.r?"var(--grass)":"var(--red)"}">${x.r?"💥 back to 0":x.k+" km"}</td></tr>`).join("")}</table>`:""}
+  <div id="streak"></div>
+  <p class="rule" style="margin-top:8px">Next quiz in <b class="cdclock">${clock()}</b>. One attempt per day.</p>
   <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="share2">Share</button><button type="button" class="ghost" id="replay2">▶ Replay route</button><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button><button type="button" class="ghost" id="past2">📅 Past days</button></div>`;
-  cdTimer=setInterval(()=>{const c=document.getElementById("cd");if(c)c.textContent=untilMidnight();else clearInterval(cdTimer);if(todayKey()!==h.key)location.reload();},30000);
-  h.key=todayKey();
+  startClock();showStreak();
   document.getElementById("replay2").onclick=()=>replayRoute((h.log||[]).map(x=>x.k),(h.log||[]).map(x=>x.ti));
   document.getElementById("past2").onclick=()=>{clearInterval(cdTimer);pastList(()=>resultView(h));};
-  document.getElementById("share2").onclick=e=>shareResult(shareText(h.km,h.correct,(h.log||[]).map(x=>x.k)),e.currentTarget);
+  document.getElementById("share2").onclick=e=>shareResult(shareText(h.km,h.correct,(h.log||[]).map(x=>({ti:x.ti,r:x.r}))),e.currentTarget);
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
   follow=false;travel(h.km,0);renderBoard();
 }
 function intro(){
   setTimeout(renderStats,0);
   document.body.classList.toggle("playing",false);document.body.classList.toggle("done",false);
-  {const all=store.get("rtf_hist",{}),hh=all[todayKey()];if(hh){if(!hh.done){hh.done=true;store.set("rtf_hist",all);pushScore();}pickDaily();resultView(hh);return;}}
+  {const all=store.get("rtf_hist",{}),hh=all[todayKey()];if(hh){
+    if(!hh.done&&otherTabPlaying(todayKey())){pickDaily();stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1}</div><h2>Your game is open in another tab</h2><p class="rule">Finish today's game in the other tab or window. This page updates when you're done.</p><div class="row"><span></span><button type="button" class="ghost" id="again">Check again</button></div>`;document.getElementById("again").onclick=()=>location.reload();const w=()=>{if(!otherTabPlaying(todayKey())){window.removeEventListener("storage",w);location.reload();}};window.addEventListener("storage",w);setTimeout(()=>location.reload(),9000);return;}
+    if(!hh.done){hh.done=true;store.set("rtf_hist",all);pushScore(todayKey());}pickDaily();resultView(hh);return;}}
   pickDaily();
   const h=store.get("rtf_hist",{})[todayKey()],d=new Date();
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}.</div><h2>Eight questions to the final</h2>
@@ -908,7 +956,7 @@ function intro(){
   renderBoard();
   {const p0=document.getElementById("past0");if(p0)p0.onclick=()=>pastList(intro);}
   const b=document.getElementById("start");
-  b.onclick=()=>{const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){all[k]={km:0,correct:0,answered:0,done:false,day:dayNo()+1,at:Date.now()};store.set("rtf_hist",all);pushScore();}ask();};
+  b.onclick=()=>{if(todayKey()!==PAGE_DAY){location.reload();return;}const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){GAME_KEY=k;GAME_DAY=dayNo()+1;all[k]={km:0,correct:0,answered:0,done:false,day:GAME_DAY,at:Date.now()};store.set("rtf_hist",all);liveOn();pushScore(k);loadSame();}ask();};
   b.focus({preventScroll:true});
 }
 function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();travel(0,0);intro();}
