@@ -221,6 +221,7 @@ body.playing #mechip{display:none}
 .same{margin-top:6px;font-size:15px;opacity:.85}
 .streak{display:inline-block;margin:8px 0 2px;padding:6px 12px;border-radius:999px;background:#fff3cd;border:2px solid #14213d;font-size:16px}
 .rep{margin-left:6px;padding:4px 10px;font-size:13px}.rep.sm{padding:2px 8px;font-size:12px}.samesm{font-size:13px;opacity:.75;font-weight:400}
+.admt{width:100%;font-size:13px}.admt th{text-align:left;font-size:11px;opacity:.7}
 </style>
 </head>
 <body>
@@ -728,7 +729,7 @@ setInterval(()=>{if(todayKey()!==PAGE_DAY&&!ranked&&!document.body.classList.con
 let REMOTE_SETS={};
 const SETS_READY=Promise.race([fetch("https://raw.githubusercontent.com/franebilus6-bit/road-to-the-final/data/sets.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(j=>{if(j&&typeof j==="object")REMOTE_SETS=j;}).catch(()=>{}),new Promise(r=>setTimeout(r,4000))]);
 function pickDaily(){const d=dayNo(),r=REMOTE_SETS[todayKey()];CATS=(Array.isArray(r)&&r.length===8&&r)||(d>=0&&SETS[d])||SETS[((d%SETS.length)+SETS.length)%SETS.length];}
-function saveRanked(fin){const h=store.get("rtf_hist",{}),k=GAME_KEY||todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:GAME_DAY||dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok,ti:x.ti,r:x.r||0}))};store.set("rtf_hist",h);pushScore(k);if(fin)liveOff();}
+function saveRanked(fin){const h=store.get("rtf_hist",{}),k=GAME_KEY||todayKey();if(h[k]&&h[k].done)return;h[k]={km:total,correct:log.filter(x=>x.ok).length,answered:log.length,done:fin,day:GAME_DAY||dayNo()+1,at:(h[k]&&h[k].at)||Date.now(),log:log.map(x=>({t:x.title,l:x.label,k:x.km,ok:x.ok,ti:x.ti,r:x.r||0}))};store.set("rtf_hist",h);pushScore(k);if(fin){liveOff();logPlay(k);}}
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 /* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
 const SB_URL="https://wrmjrtxrjterkuslwqjp.supabase.co",SB_KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
@@ -747,6 +748,17 @@ const READY=(async()=>{
 /* private visit counter: one row per browser per day, write-only for the public (nobody can read it through the site) */
 async function logVisit(){try{const k=todayKey();if(store.get("rtf_vday","")===k)return;let v=store.get("rtf_vid","");if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2));store.set("rtf_vid",v);}
   const {error}=await sb.from("visits").insert({day:k,vid:v},{returning:"minimal"});if(!error||error.code==="23505")store.set("rtf_vday",k);}catch(e){}}
+async function logPlay(k){try{if(!sb)return;let v=store.get("rtf_vid","");if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2));store.set("rtf_vid",v);}
+  await sb.from("plays").insert({day:k,vid:v,signed:signedIn()});}catch(e){}}
+/* owner-only stats panel (the database refuses everyone else) */
+const ADMIN_ID="7ddaeb6f-6afd-4cc1-ac94-a47366ba6764";
+async function drawAdmin(){const el=document.getElementById("adm");if(!el)return;el.innerHTML=`<p class="rule">Loading…</p>`;
+  const [st,rp]=await Promise.all([sb.rpc("admin_stats",{p_days:14}),sb.rpc("admin_reports",{p_limit:30})]);
+  if(st.error){el.innerHTML=`<p class="rule">Stats unavailable.</p>`;return;}
+  const rows=st.data||[];
+  el.innerHTML=`<table class="admt"><tr><th>Day</th><th>Visitors</th><th>Played</th><th>Guests</th><th>Signed in</th></tr>${rows.map(r=>`<tr><td>${String(r.day).slice(8,10)}.${String(r.day).slice(5,7)}.</td><td class="n">${r.visits}</td><td class="n">${r.plays}</td><td class="n">${r.guest_plays}</td><td class="n">${r.signed_plays}</td></tr>`).join("")}</table>
+  <p class="rule" style="font-size:12px;margin:4px 0 10px">Visitors = devices that opened the site (counted from 22.11. 14:47). Played = finished games; guests counted from the update on 22.11. Signed in = results on the leaderboard.</p>
+  <div class="alabel">Reported answers</div>${(rp.data||[]).length?`<table class="admt">${rp.data.map(r=>`<tr><td>${String(r.day).slice(8,10)}.${String(r.day).slice(5,7)}.</td><td>${esc(r.title)}<br><b>${esc(r.answer)}</b></td><td class="n">${r.n}×</td></tr>`).join("")}</table>`:`<p class="rule">No reports.</p>`}`;}
 async function loadProfile(){
   const {data}=await sb.from("profiles").select("name").eq("id",ME.id).maybeSingle();PROFILE=data||null;
   if(PROFILE){await loadLeagues();await importLocal();await pendingJoin();}
@@ -881,9 +893,10 @@ async function openAccount(section){
      <div class="arow" style="margin-top:10px"><input id="lgname" class="namein" maxlength="40" placeholder="New league name"><button type="button" id="lgmake">Create</button></div>
      <div class="arow" style="margin-top:8px"><input id="lgcode" class="namein" maxlength="6" placeholder="Join with code" style="text-transform:uppercase"><button type="button" class="ghost" id="lgjoin">Join</button></div>
      <div class="merr" id="lgmsg"></div></div>
+   ${ME.id===ADMIN_ID?`<div class="asec"><div class="alabel">📊 Site stats (only you see this)</div><div id="adm"></div></div>`:""}
    <div class="row" style="margin-top:6px"><span class="rule" style="font-size:12px">${esc(ME.email||"")}</span><button type="button" class="ghost" id="aout">Sign out</button></div></div>`;
   document.getElementById("aclose").onclick=()=>ov.remove();
-  document.getElementById("aout").onclick=signOut;
+  document.getElementById("aout").onclick=signOut;if(ME.id===ADMIN_ID)drawAdmin();
   const nm=document.getElementById("aname"),saveN=async()=>{const e=await saveName(nm.value);document.getElementById("anerr").textContent=e;if(!e){renderMe();loadBoard();ov.querySelector("h2").textContent=PROFILE.name;document.getElementById("anerr").textContent="";document.getElementById("anamesave").textContent="Saved ✓";setTimeout(()=>{const b=document.getElementById("anamesave");if(b)b.textContent="Save";},1500);}};
   document.getElementById("anamesave").onclick=saveN;nm.addEventListener("keydown",e=>{if(e.key==="Enter")saveN();});
   const msg=document.getElementById("lgmsg");
