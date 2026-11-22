@@ -554,6 +554,8 @@ const ALIAS_HR={
 "Zlatan Ibrahimović":["ibra","zlatan","ibrahimovic"],"Ronaldo (Brazil)":["r9","ronaldo nazario","fenomen","ronaldo brazilac","il fenomeno"],"Cristiano Ronaldo":["cr7","ronaldo","kristijano"],"Lionel Messi":["messi","leo messi","mesi"],"Kylian Mbappé":["mbappe","mbape"],"Zinédine Zidane":["zidane","zizou","zidan"],"Andrés Iniesta":["iniesta"],"Mario Götze":["gotze","goetze"],"Mario Mandžukić":["mandzo","mandzukic","mandzukic"],"Ivan Perišić":["perisic"],"Andrea Pirlo":["pirlo"],"Clarence Seedorf":["seedorf"],"Mario Balotelli":["balo","balotelli"],"Christian Vieri":["bobo vieri","vieri"],"Hakan Çalhanoğlu":["calhanoglu","hakan"],"Dario Šimić":["simic","dario simic"],"Ole Gunnar Solskjær":["ole","solskjaer","solsker","solskjer"],"Erik ten Hag":["ten hag"],"Ruud van Nistelrooy":["van nistelrooy","van nistelroj","ruud"],"Ruben Amorim":["amorim","ruben amorim"],"Mauricio Pochettino":["poch","pochettino","pocetino"],"José Mourinho":["mourinho","mou","murinjo","special one"],"Louis van Gaal":["van gaal","lvg"],"Darren Fletcher":["fletcher","flecer"],"Ralf Rangnick":["rangnick"],"Ryan Giggs":["giggs"],"Michael Carrick":["carrick","karik"],"David Moyes":["moyes","mojs"],"Luka Modrić":["modric","luka"],"Ivan Rakitić":["rakitic"],"Davor Šuker":["suker"]
 };
 for(const [k,v] of Object.entries(ALIAS_HR))ALIAS[k]=(ALIAS[k]||[]).concat(v);
+/* nadimci koji su falili (prijave igrača) */
+for(const [k,v] of Object.entries({"Red Star Stadium":["marakana","rajko mitic","stadion rajko mitic","stadion crvene zvezde","crvena zvezda","zvezda","red star"],"Stadion Rajko Mitić":["marakana","red star stadium","stadion crvene zvezde","crvena zvezda"],"Oliver Kahn":["kahn","khan","kan","oliver khan","oliver kan"]}))ALIAS[k]=(ALIAS[k]||[]).concat(v);
 
 const TYPE={player:{ph:"Type a player",w:"player"},club:{ph:"Type a club",w:"club"},country:{ph:"Type a country",w:"country"},coach:{ph:"Type a manager",w:"manager"},year:{ph:"Type a year",w:"year"},city:{ph:"Type a city",w:"city"},stadium:{ph:"Type a stadium",w:"stadium"}};
 
@@ -561,7 +563,7 @@ const TYPE={player:{ph:"Type a player",w:"player"},club:{ph:"Type a club",w:"clu
 function norm(s){return s.toLowerCase().replace(/đ/g,"d").replace(/ß/g,"ss").replace(/ø/g,"o").replace(/ł/g,"l").replace(/ı/g,"i").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
 function fold(s){return s.replace(/sch/g,"s").replace(/sh/g,"s").replace(/ch/g,"c").replace(/ck/g,"k").replace(/ph/g,"f").replace(/x/g,"ks").replace(/[yj]/g,"i").replace(/w/g,"v").replace(/ou/g,"u").replace(/ue/g,"u").replace(/oe/g,"o").replace(/ae/g,"e").replace(/(.)\1+/g,"$1");}
 const key=s=>fold(norm(s));
-function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let q=null,p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++){c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));if(q&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])c[j]=Math.min(c[j],q[j-2]+1);}q=p;p=c;}return p[n];}
 const DB={player:[],club:[],country:[],coach:[],city:[],stadium:[]};
 (function build(){
   const seen={};
@@ -666,7 +668,9 @@ const speedMult=sec=>{for(const [t,m] of SPEED)if(sec<=t)return m;return .8;};
 let autoNext=0;
 /* the same answer can carry a qualifier in one set and not in another ("Luis Suárez" vs "Luis Suárez (Uruguay)"): accept it when only one side is qualified */
 const baseName=n=>String(n).replace(/\s*\(.*\)\s*$/,"").trim().toLowerCase();
-function canonFor(c,name){if(name===null||Object.prototype.hasOwnProperty.call(c.a,name))return name;
+/* isti objekt pod dva imena */
+const SAME_AS={"Stadion Rajko Mitić":"Red Star Stadium","Red Star Stadium":"Stadion Rajko Mitić"};
+function canonFor(c,name){if(name===null||Object.prototype.hasOwnProperty.call(c.a,name))return name;if(SAME_AS[name]&&Object.prototype.hasOwnProperty.call(c.a,SAME_AS[name]))return SAME_AS[name];
   const q=/\(.*\)\s*$/.test(name),b=baseName(name);
   const hit=Object.keys(c.a).find(k=>baseName(k)===b&&(!q||!/\(.*\)\s*$/.test(k)));return hit||name;}
 /* report a wrong verdict; reports are write-only for the public */
