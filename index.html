@@ -814,12 +814,12 @@ async function loadBoard(){
 }
 /* the weekly table runs Monday 00:00 to Sunday 23:59 (local time) */
 function weekStart(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return keyOf(d);}
-function weekTable(inScope,meId){
+function weekTable(inScope,meId,all){
   const by={};for(const r of WEEK_ROWS){if(!r.profiles||!inScope(r.user_id))continue;const o=by[r.user_id]||(by[r.user_id]={id:r.user_id,name:r.profiles.name,km:0,days:0});o.km+=r.km||0;o.days++;}
   const rows=Object.values(by).filter(x=>x.km>0).sort((a,b)=>b.km-a.km),mi=rows.findIndex(x=>x.id===meId),md=["🥇","🥈","🥉"];
   if(!rows.length)return `<div class="eyebrow sub">This week</div><p class="rule" style="margin:4px 0 0">Nobody has scored this week yet.</p>`;
   const row=(x,i)=>`<tr${x.id===meId?' class="me"':""}><td>${i<3?md[i]:(i+1)+"."} ${esc(x.name)}${x.id===meId?" (you)":""}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`;
-  return `<div class="eyebrow sub">This week <small style="opacity:.7;text-transform:none;letter-spacing:0">· resets Monday 00:00</small></div><table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> this week.</p>`:""}`;}
+  return `<div class="eyebrow sub">This week <small style="opacity:.7;text-transform:none;letter-spacing:0">· resets Monday 00:00</small></div><table>${(all?rows:rows.slice(0,3)).map(row).join("")}${!all&&mi>=3?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> this week.</p>`:""}`;}
 function guestRank(){if(signedIn())return "";const h=store.get("rtf_hist",{})[todayKey()];if(!h||!h.done)return "";
   const pos=TODAY_ROWS.filter(r=>r.profiles&&r.km>h.km).length+1;
   return `<p class="rule" style="margin:6px 0 0">🔒 With <b>${h.km} km</b> you'd be <b>${pos}.</b> today. Sign in with Google to get on the board.</p>`;}
@@ -836,7 +836,7 @@ function boardHtml(){
   const row=(r,i)=>`<tr${r.me?' class="me"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
   const mi=rows.findIndex(r=>r.me);
   h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> today.</p>`:guestRank()}`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>${guestRank()}`);
-  h+=weekTable(inScope,meId);
+  h+=weekTable(inScope,meId,!!lg);
   if(lg){const link=location.origin+location.pathname+"?join="+lg.code;
     h+=`<div class="lgbox"><div>Invite friends to <b>${esc(lg.name)}</b> · code <b class="code">${lg.code}</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin-top:6px"><button type="button" class="ghost" id="lgcopy" data-l="${esc(link)}">Copy invite link</button><button type="button" class="ghost" id="lgleave">Leave league</button></div></div>`;}
   return h;
