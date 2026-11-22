@@ -728,7 +728,7 @@ const READY=(async()=>{
     sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
     const {data:{session}}=await sb.auth.getSession();
     ME=session?session.user:null;
-    if(ME){await loadProfile();await syncToday();if(PROFILE&&store.get("rtf_hist",{})[todayKey()])pushScore();}
+    if(ME){await loadProfile();if(await syncToday()&&!ranked&&!document.body.classList.contains("playing"))setTimeout(intro,0);if(PROFILE&&store.get("rtf_hist",{})[todayKey()])pushScore();}
     dbState="ok";logVisit();
     sb.auth.onAuthStateChange((ev,sess)=>{const was=ME&&ME.id;ME=sess?sess.user:null;if((ME&&ME.id)!==was)location.reload();});
   }catch(e){dbState="none";}
@@ -751,7 +751,11 @@ async function syncToday(){
   if(data){const all=store.get("rtf_hist",{});const loc=all[k];
     if(!loc||(loc.answered||0)<=(data.answered||0))all[k]={km:data.km,correct:data.correct,answered:data.answered,done:true,day:dayNo()+1,log:data.log||undefined,at:Date.parse(data.started_at)};
     else all[k].done=true;
-    store.set("rtf_hist",all);}
+    store.set("rtf_hist",all);return false;}
+  /* an empty locked attempt with no row on the server was reset by the admin: let this player start again */
+  const all=store.get("rtf_hist",{}),loc=all[k];
+  if(loc&&loc.done&&!(loc.answered>0)){delete all[k];store.set("rtf_hist",all);return true;}
+  return false;
 }
 async function importLocal(){
   if(store.get("rtf_imported_"+ME.id,false))return;
