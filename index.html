@@ -220,6 +220,7 @@ body.playing #mechip{display:none}
 @keyframes crashin{0%{transform:scale(.6) rotate(-4deg);opacity:0}60%{transform:scale(1.06) rotate(1deg);opacity:1}100%{transform:none}}
 .same{margin-top:6px;font-size:15px;opacity:.85}
 .streak{display:inline-block;margin:8px 0 2px;padding:6px 12px;border-radius:999px;background:#fff3cd;border:2px solid #14213d;font-size:16px}
+.rep{margin-left:6px;padding:4px 10px;font-size:13px}.rep.sm{padding:2px 8px;font-size:12px}.samesm{font-size:13px;opacity:.75;font-weight:400}
 </style>
 </head>
 <body>
@@ -581,6 +582,15 @@ let ansStart=0,lastMult=1,lastSec=0;
 const SPEED=[[3,1.3],[6,1.2],[10,1.1],[15,1],[20,.9],[99,.8]];
 const speedMult=sec=>{for(const [t,m] of SPEED)if(sec<=t)return m;return .8;};
 let autoNext=0;
+/* the same answer can carry a qualifier in one set and not in another ("Luis Suárez" vs "Luis Suárez (Uruguay)"): accept it when only one side is qualified */
+const baseName=n=>String(n).replace(/\s*\(.*\)\s*$/,"").trim().toLowerCase();
+function canonFor(c,name){if(name===null||Object.prototype.hasOwnProperty.call(c.a,name))return name;
+  const q=/\(.*\)\s*$/.test(name),b=baseName(name);
+  const hit=Object.keys(c.a).find(k=>baseName(k)===b&&(!q||!/\(.*\)\s*$/.test(k)));return hit||name;}
+/* report a wrong verdict; reports are write-only for the public */
+async function reportAnswer(title,label,btn){if(btn){btn.disabled=true;btn.textContent="Sending…";}
+  let ok=false;try{if(sb){const {error}=await sb.from("reports").insert({day:GAME_KEY||todayKey(),title:String(title).slice(0,200),answer:String(label).slice(0,120),user_id:ME?ME.id:null,vid:store.get("rtf_vid","")||null});ok=!error;}}catch(e){}
+  if(btn)btn.textContent=ok?"Reported ✓ thanks!":"Couldn't send, try later";}
 const MAXR=4;
 const rocketsUsed=()=>log.filter(x=>x.ti===6).length;
 /* what share of today's signed-in players gave the same answer */
@@ -592,7 +602,7 @@ function sameText(title,label){if(!SAME)return "";const ans=SAME.map(l=>l.find(e
   const p=Math.round(n/ans.length*100);return `👥 <b>${p<1?"<1":p}%</b> of players said the same.`;}
 function lock(name,label,why){
   stopTimer();
-  const c=CATS[idx],ok=name!==null&&Object.prototype.hasOwnProperty.call(c.a,name);
+  const c=CATS[idx];name=canonFor(c,name);const ok=name!==null&&Object.prototype.hasOwnProperty.call(c.a,name);
   let km=0,tr=null,sh=0;
   lastSec=ansStart?(performance.now()-ansStart)/1000:25;lastMult=speedMult(lastSec);
   if(ok){sh=share(c,name);tr=tierFor(c,name);km=Math.round(tr[1]*lastMult);vehicle(TIERS.indexOf(tr));}
@@ -604,12 +614,13 @@ function lock(name,label,why){
   const top=mostCommon(c),last=idx===CATS.length-1;
   stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}</div>
   <div class="verdict ${ok?"ok":"no"}">${ok?(isJoker(c,name)?"Correct · JOKER!":"Correct"):why==="time"?"Out of time":why==="skip"?"Skipped":"Wrong"}</div>${ok&&isJoker(c,name)?`<div class="joker">Cult pick! Joker answers always launch SIUUU, however many players give them.</div>`:""}
-  <div>${name===null?"":"<b>"+esc(label)+"</b>"+(ok?"":" is not on the list.")}</div>
+  <div>${name===null?"":"<b>"+esc(label)+"</b>"+(ok?"":` is not on the list. <button type="button" class="ghost rep" id="rep">🚩 I think it's right</button>`)}</div>
   <div class="row" style="justify-content:flex-start;gap:14px;margin-top:8px"><div class="plus">${crash?"0":"+"+km}<span style="font-size:22px"> km</span></div>${ok?`<span class="chip" style="background:${tr[3]}">${esc(tr[2])}</span>`:""}</div>${rkNote}${ok?`<div class="same" id="same">${sameText(c.title,label)}</div>`:""}${ok&&!crash&&lastMult!==1?`<div class="speed ${lastMult>1?"fast":"slow"}">${lastMult>1?"Speed bonus ⚡ ×"+lastMult.toFixed(1):"Too slow 🐢 ×"+lastMult.toFixed(1)}</div>`:""}
   <div class="row"><span></span><button type="button" id="go">${last?"End of the road":"Next"}</button></div>`;
   const go=document.getElementById("go");go.focus({preventScroll:true});
   const nxt=()=>{clearTimeout(autoNext);idx++;if(idx<CATS.length)ask();else finish();};
   go.onclick=nxt;autoNext=setTimeout(nxt,crash?4600:rkNote?4000:ok&&tiN===6?3200:2400);
+  const rp=document.getElementById("rep");if(rp)rp.onclick=()=>{clearTimeout(autoNext);reportAnswer(c.title,label,rp);};
 }
 function finish(){
   follow=false;
@@ -721,7 +732,7 @@ function saveRanked(fin){const h=store.get("rtf_hist",{}),k=GAME_KEY||todayKey()
 /* ljestvica prijatelja: svatko piše samo svoj dokument scores/<id>, svi čitaju sve */
 /* ---------- accounts (Google via Supabase), names, results, leagues ---------- */
 const SB_URL="https://wrmjrtxrjterkuslwqjp.supabase.co",SB_KEY="sb_publishable_DP-TGqheC6jvGMxaphJJdg_s_fAR6aT";
-let sb=null,ME=null,PROFILE=null,LEAGUES=[],SCOPE=store.get("rtf_scope","global"),TODAY_ROWS=[],ALLTIME=[],MEMBERS={},dbState="pending",boardMsg="";
+let sb=null,ME=null,PROFILE=null,LEAGUES=[],SCOPE=store.get("rtf_scope","global"),TODAY_ROWS=[],ALLTIME=[],WEEK_ROWS=[],MEMBERS={},dbState="pending",boardMsg="";
 const READY=(async()=>{
   try{
     if(!window.supabase||!supabase.createClient){dbState="none";return;}
@@ -794,13 +805,21 @@ async function loadBoard(){
   if(!sb)return;
   try{
     const k=todayKey();
-    const [t,a]=await Promise.all([sb.from("results").select("user_id,km,correct,done,profiles(name)").eq("day",k).limit(5000),sb.from("alltime").select("user_id,name,km,days").order("km",{ascending:false}).limit(5000)]);
-    if(!t.error)TODAY_ROWS=t.data||[];if(!a.error)ALLTIME=a.data||[];
+    const [t,a,w]=await Promise.all([sb.from("results").select("user_id,km,correct,done,profiles(name)").eq("day",k).limit(5000),sb.from("alltime").select("user_id,name,km,days").order("km",{ascending:false}).limit(5000),sb.from("results").select("user_id,km,day,profiles(name)").gte("day",weekStart()).limit(20000)]);
+    if(!t.error)TODAY_ROWS=t.data||[];if(!a.error)ALLTIME=a.data||[];if(!w.error)WEEK_ROWS=w.data||[];
     if(SCOPE!=="global"&&!MEMBERS[SCOPE]){const {data}=await sb.from("league_members").select("user_id").eq("league_id",SCOPE);MEMBERS[SCOPE]=new Set((data||[]).map(x=>x.user_id));}
     dbState="ok";
   }catch(e){}
   renderBoard();
 }
+/* the weekly table runs Monday 00:00 to Sunday 23:59 (local time) */
+function weekStart(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return keyOf(d);}
+function weekTable(inScope,meId){
+  const by={};for(const r of WEEK_ROWS){if(!r.profiles||!inScope(r.user_id))continue;const o=by[r.user_id]||(by[r.user_id]={id:r.user_id,name:r.profiles.name,km:0,days:0});o.km+=r.km||0;o.days++;}
+  const rows=Object.values(by).filter(x=>x.km>0).sort((a,b)=>b.km-a.km),mi=rows.findIndex(x=>x.id===meId),md=["🥇","🥈","🥉"];
+  if(!rows.length)return `<div class="eyebrow sub">This week</div><p class="rule" style="margin:4px 0 0">Nobody has scored this week yet.</p>`;
+  const row=(x,i)=>`<tr${x.id===meId?' class="me"':""}><td>${i<3?md[i]:(i+1)+"."} ${esc(x.name)}${x.id===meId?" (you)":""}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`;
+  return `<div class="eyebrow sub">This week <small style="opacity:.7;text-transform:none;letter-spacing:0">· resets Monday 00:00</small></div><table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> this week.</p>`:""}`;}
 function guestRank(){if(signedIn())return "";const h=store.get("rtf_hist",{})[todayKey()];if(!h||!h.done)return "";
   const pos=TODAY_ROWS.filter(r=>r.profiles&&r.km>h.km).length+1;
   return `<p class="rule" style="margin:6px 0 0">🔒 With <b>${h.km} km</b> you'd be <b>${pos}.</b> today. Sign in with Google to get on the board.</p>`;}
@@ -817,8 +836,7 @@ function boardHtml(){
   const row=(r,i)=>`<tr${r.me?' class="me"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
   const mi=rows.findIndex(r=>r.me);
   h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> today.</p>`:guestRank()}`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>${guestRank()}`);
-  const at=ALLTIME.filter(x=>inScope(x.user_id)&&x.km>0).sort((a,b)=>b.km-a.km),ai=at.findIndex(x=>x.user_id===meId),md=["🥇","🥈","🥉"];
-  if(at.length)h+=`<div class="eyebrow sub">All-time top 3</div><table>${at.slice(0,3).map((x,i)=>`<tr${x.user_id===meId?' class="me"':""}><td>${md[i]} ${esc(x.name)}</td><td>${x.days} day${x.days===1?"":"s"}</td><td class="n">${x.km.toLocaleString("en")} km</td></tr>`).join("")}</table>${ai>=0?`<p class="rule" style="margin:6px 0 0">Your all-time total: <b>${at[ai].km.toLocaleString("en")} km</b> · <b>${ai+1}.</b></p>`:""}`;
+  h+=weekTable(inScope,meId);
   if(lg){const link=location.origin+location.pathname+"?join="+lg.code;
     h+=`<div class="lgbox"><div>Invite friends to <b>${esc(lg.name)}</b> · code <b class="code">${lg.code}</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin-top:6px"><button type="button" class="ghost" id="lgcopy" data-l="${esc(link)}">Copy invite link</button><button type="button" class="ghost" id="lgleave">Leave league</button></div></div>`;}
   return h;
@@ -934,16 +952,18 @@ function resultView(h){
   const d=new Date(),done=h.km>=FINISH,r=reached(h.km),t=ST[r];
   stage.innerHTML=`<div class="eyebrow">Daily set #${dayNo()+1} · ${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}. · already played</div><h2>${done?"You reached the final today 🏆":"Today's result"}</h2>
   <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${h.km}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${h.correct}/8 correct${done?" · Final reached":" · "+esc(t.n)}</span></div>
-  ${h.log?`<table>${h.log.map(x=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b></td><td class="n" style="color:${x.ok&&!x.r?"var(--grass)":"var(--red)"}">${x.r?"💥 back to 0":x.k+" km"}</td></tr>`).join("")}</table>`:""}
+  ${h.log?`<table>${h.log.map((x,i)=>`<tr><td>${esc(x.t)}<br><b>${esc(x.l)}</b>${x.ok?` <span class="samesm" data-i="${i}"></span>`:/^\(/.test(x.l)?"":` <button type="button" class="ghost rep sm" data-r="${i}">🚩 report</button>`}</td><td class="n" style="color:${x.ok&&!x.r?"var(--grass)":"var(--red)"}">${x.r?"💥 back to 0":x.k+" km"}</td></tr>`).join("")}</table>`:""}
   <div id="streak"></div>
   <p class="rule" style="margin-top:8px">Next quiz in <b class="cdclock">${clock()}</b>. One attempt per day.</p>
   <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="share2">Share</button><button type="button" class="ghost" id="replay2">▶ Replay route</button><button type="button" class="ghost" id="bestbtn2">SIUUU answers</button><button type="button" class="ghost" id="past2">📅 Past days</button></div>`;
   startClock();showStreak();
+  stage.querySelectorAll("button[data-r]").forEach(b=>b.onclick=()=>{const x=h.log[+b.dataset.r];reportAnswer(x.t,x.l,b);});
+  (async()=>{if(!SAME)await loadSame();stage.querySelectorAll(".samesm[data-i]").forEach(el=>{const x=h.log[+el.dataset.i];const t=sameText(x.t,x.l);el.innerHTML=!t?"":/Nobody/.test(t)?"· 🦄 only you":/Someone/.test(t)?"· 👥 not only you":"· "+t.replace(" of players said the same."," said the same");});})();
   document.getElementById("replay2").onclick=()=>replayRoute((h.log||[]).map(x=>x.k),(h.log||[]).map(x=>x.ti));
   document.getElementById("past2").onclick=()=>{clearInterval(cdTimer);pastList(()=>resultView(h));};
   document.getElementById("share2").onclick=e=>shareResult(shareText(h.km,h.correct,(h.log||[]).map(x=>({ti:x.ti,r:x.r}))),e.currentTarget);
   document.getElementById("bestbtn2").onclick=()=>{clearInterval(cdTimer);best({mine:(h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>resultView(h),total:h.km});};
-  follow=false;travel(h.km,0);renderBoard();
+  follow=false;travel(h.km,0);renderBoard();READY.then(()=>{if(sb)loadBoard();});
 }
 function intro(){
   setTimeout(renderStats,0);
