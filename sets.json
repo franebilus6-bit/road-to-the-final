@@ -362,5 +362,158 @@
     "Arena AufSchalke": 650656
    }
   }
+ ],
+ "2026-11-23": [
+  {
+   "type": "player",
+   "title": "Player who played for both Chelsea and Arsenal",
+   "rule": "Competitive first-team games for both clubs in the Premier League era (since 1992/93).",
+   "a": {
+    "Ashley Cole": 3657502,
+    "Cesc Fàbregas": 5528991,
+    "Petr Čech": 2538873,
+    "Olivier Giroud": 7944430,
+    "David Luiz": 3155845,
+    "Willian": 2663769,
+    "Jorginho": 3937772,
+    "Kai Havertz": 5761342,
+    "Pierre-Emerick Aubameyang": 7715157,
+    "Raheem Sterling": 8727012,
+    "William Gallas": 920357,
+    "Emmanuel Petit": 1172009,
+    "Nicolas Anelka": 3399992,
+    "Lassana Diarra": 991511,
+    "Yossi Benayoun": 918878,
+    "Noni Madueke": 4990454,
+    "Kepa Arrizabalaga": 3300792
+   }
+  },
+  {
+   "type": "player",
+   "title": "Player managed by both Pep Guardiola and Jürgen Klopp",
+   "rule": "Competitive club games under both managers.",
+   "a": {
+    "Robert Lewandowski": 15147457,
+    "Mario Götze": 2627321,
+    "İlkay Gündoğan": 5441743,
+    "Thiago Alcântara": 4208041,
+    "Xherdan Shaqiri": 3811106
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that played in a World Cup final",
+   "rule": "Every final from 1930 to 2026; West Germany counts as Germany.",
+   "a": {
+    "Uruguay": 5020822,
+    "Argentina": 17360569,
+    "Italy": 7469126,
+    "Czechoslovakia": 577982,
+    "Hungary": 2111318,
+    "Germany": 10049029,
+    "Brazil": 14872978,
+    "Sweden": 1126582,
+    "England": 15542162,
+    "Netherlands": 7393955,
+    "France": 12481809,
+    "Spain": 11605926,
+    "Croatia": 5411352
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that has been champion of the Netherlands",
+   "rule": "Eredivisie titles since 1956/57.",
+   "a": {
+    "Ajax": 6981366,
+    "PSV": 4762883,
+    "Feyenoord": 4098038,
+    "AZ Alkmaar": 2289351,
+    "Twente": 1351721,
+    "Sparta Rotterdam": 852624,
+    "DOS": 43858,
+    "DWS": 107049
+   }
+  },
+  {
+   "type": "player",
+   "title": "World Cup Golden Ball winner",
+   "rule": "Best player of the tournament, 1982 to 2022.",
+   "a": {
+    "Paolo Rossi": 1222873,
+    "Diego Maradona": 16528048,
+    "Salvatore Schillaci": 1042340,
+    "Romário": 3838660,
+    "Ronaldo (Brazil)": 17117979,
+    "Oliver Kahn": 2269062,
+    "Zinédine Zidane": 13868893,
+    "Diego Forlán": 2868398,
+    "Lionel Messi": 72708936,
+    "Luka Modrić": 12440344
+   }
+  },
+  {
+   "type": "coach",
+   "title": "Real Madrid head coach since 2000",
+   "rule": "Permanent and interim head coaches from 2000 to today.",
+   "a": {
+    "Vicente del Bosque": 1204198,
+    "Carlos Queiroz": 2049902,
+    "José Antonio Camacho": 197113,
+    "Mariano García Remón": 41698,
+    "Vanderlei Luxemburgo": 254182,
+    "Juan Ramón López Caro": 75769,
+    "Fabio Capello": 1707202,
+    "Bernd Schuster": 528491,
+    "Juande Ramos": 342298,
+    "Manuel Pellegrini": 1809691,
+    "José Mourinho": 15410684,
+    "Carlo Ancelotti": 12622773,
+    "Rafael Benítez": 3194607,
+    "Zinédine Zidane": 13868893,
+    "Julen Lopetegui": 2518766,
+    "Santiago Solari": 759313,
+    "Xabi Alonso": 8961736,
+    "Álvaro Arbeloa": 2251774
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year a World Cup was held in Europe",
+   "rule": "Type the year of the tournament, e.g. 1998.",
+   "a": {
+    "1934": 2304658,
+    "1938": 2287736,
+    "1954": 2299927,
+    "1958": 2849094,
+    "1966": 4180997,
+    "1974": 3116479,
+    "1982": 4160912,
+    "1990": 5426250,
+    "1998": 7381464,
+    "2006": 9787648
+   }
+  },
+  {
+   "type": "stadium",
+   "title": "Stadium that hosted a European Championship final",
+   "rule": "Every Euro final from 1960 to 2024.",
+   "a": {
+    "Parc des Princes": 1458708,
+    "Santiago Bernabéu": 2684642,
+    "Stadio Olimpico": 1149444,
+    "Heysel Stadium": 594939,
+    "Red Star Stadium": 16750,
+    "Olympiastadion (Munich)": 603914,
+    "Ullevi": 222246,
+    "Wembley": 5983029,
+    "De Kuip": 598531,
+    "Estádio da Luz": 804104,
+    "Ernst Happel Stadium": 391807,
+    "Olimpiyskiy Stadium Kyiv": 416780,
+    "Stade de France": 2414542,
+    "Olympiastadion (Berlin)": 1737856
+   }
+  }
  ]
 }
