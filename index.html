@@ -932,7 +932,8 @@ function boardHtml(){
   const rows=TODAY_ROWS.filter(r=>inScope(r.user_id)&&r.profiles).map(r=>({n:r.profiles.name,me:r.user_id===meId,t:r})).sort((a,b)=>b.t.km-a.t.km);
   const row=(r,i)=>`<tr${r.me?' class="me"':""}><td>${i+1}. ${esc(r.n)}${r.me?" (you)":""}</td><td>${r.t.correct}/8${r.t.done?"":" · playing"}</td><td class="n">${r.t.km} km${r.t.km>=FINISH?" 🏆":""}</td></tr>`;
   const mi=rows.findIndex(r=>r.me);
-  h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,10).map(row).join("")}${mi>=10?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> today.</p>`:guestRank()}`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>${guestRank()}`);
+  const lim=lg?10:5;
+  h+=`<div class="eyebrow sub">Today</div>`+(rows.length?`<table>${rows.slice(0,lim).map(row).join("")}${mi>=lim?`<tr><td colspan="3" style="text-align:center;opacity:.6">…</td></tr>${row(rows[mi],mi)}`:""}</table>${mi>=0?`<p class="rule" style="margin:6px 0 0">You are <b>${mi+1}.</b> today.</p>`:guestRank()}`:`<p class="rule" style="margin:4px 0 0">Nobody has played today yet.</p>${guestRank()}`);
   h+=weekTable(inScope,meId,!!lg);
   if(lg){const link=location.origin+location.pathname+"?join="+lg.code;
     h+=`<div class="lgbox"><div>Invite friends to <b>${esc(lg.name)}</b> · code <b class="code">${lg.code}</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin-top:6px"><button type="button" class="ghost" id="lgcopy" data-l="${esc(link)}">Copy invite link</button><button type="button" class="ghost" id="lgleave">Leave league</button></div></div>`;}
