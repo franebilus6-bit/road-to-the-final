@@ -249,6 +249,7 @@ body.dark #map{filter:brightness(.78) saturate(.9)}
 #winov .cup{font-size:min(34vw,200px);animation:cupup 1.4s cubic-bezier(.2,1.4,.4,1) both;filter:drop-shadow(0 0 30px rgba(255,214,10,.8))}
 #winov h2{font-family:var(--font-display);font-size:min(11vw,64px);margin:6px 0 4px;color:#ffd60a;text-shadow:0 3px 0 #14213d;letter-spacing:1px}
 #winov p{margin:0;font-size:18px;opacity:.9}
+#winov .cupst{font-family:var(--font-display);font-weight:800;font-size:min(7vw,30px);letter-spacing:1px;text-transform:uppercase;background:#d62828;border:3px solid #14213d;border-radius:10px;padding:2px 14px;margin-top:-6px;animation:cupup 1.4s .15s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes cupup{0%{transform:translateY(60vh) scale(.4) rotate(-20deg)}70%{transform:translateY(-4vh) scale(1.1) rotate(6deg)}100%{transform:none}}
 @keyframes winfade{from{opacity:0}}
 </style>
@@ -487,14 +488,14 @@ function cheer(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitA
   const lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=2.2;lg.gain.value=.12;lfo.connect(lg);lg.connect(g.gain);lfo.start(t);lfo.stop(t+len);
   src.connect(f);f.connect(g);g.connect(c.destination);src.start(t);}catch(e){}}
 function winShow(){const ov=document.createElement("div");ov.id="winov";
-  ov.innerHTML=`<canvas></canvas><div class="cup">🏆</div><h2>YOU REACHED THE FINAL!</h2><p>Madrid, ${FINISH.toLocaleString("en")} km. Everything from here is bonus.</p><p style="font-size:14px;opacity:.7;margin-top:14px">Tap to continue</p>`;
+  ov.innerHTML=`<canvas></canvas><div class="cup">🏆</div><div class="cupst">${(()=>{const f=ST.find(t=>t.km===FINISH)||ST[ST.length-1];return f.n+" · "+f.g.split(" · ")[0];})()}</div><h2>YOU REACHED THE FINAL!</h2><p>${FINISH.toLocaleString("en")} km. Everything from here is bonus.</p><p style="font-size:14px;opacity:.7;margin-top:14px">Tap to continue</p>`;
   document.body.appendChild(ov);cheer();const close=()=>{ov.remove();};ov.onclick=close;setTimeout(close,4200);
   if(calm())return;const cv=ov.querySelector("canvas"),x=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
   const C=["#ffd60a","#d62828","#ffffff","#2f9e5b","#1f8bff","#f77f00"],P=[...Array(160)].map(()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.6,vx:-1.5+Math.random()*3,vy:2+Math.random()*4,s:5+Math.random()*7,r:Math.random()*6,vr:-.2+Math.random()*.4,c:C[Math.floor(Math.random()*C.length)]}));
   const t0=performance.now();const fr=n=>{if(!ov.isConnected)return;x.clearRect(0,0,cv.width,cv.height);for(const p of P){p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}if(n-t0<4200)requestAnimationFrame(fr);};requestAnimationFrame(fr);}
 const DUR=[2600,2400,2200,2000,1700,1400,900];
 /* every leg of the journey leaves a trail drawn in the style of its transport */
-const TRAIL=[{c:"#5c677d",w:2.6,d:"2 5"},{c:"#2a6fdb",w:3,d:"7 4"},{c:"#1f8bff",w:3.6,d:""},{c:"#f77f00",w:3.6,d:"1 5",cap:"round",w2:5.5},{c:"#00a6c8",w:3,d:"6 5",arc:.28},{c:"#f2b705",w:3.4,d:"",arc:.34},{c:"url(#fireg)",w:6,d:"",arc:.42,fire:1}];
+const TRAIL=[{c:"#5c677d",w:2.6,d:"2 5"},{c:"#2a6fdb",w:3,d:"7 4"},{c:"#1f8bff",w:3.6,d:""},{c:"#f77f00",w:3.6,d:"1 5",cap:"round",w2:5.5},{c:"#00a6c8",w:3.2,d:"6 5"},{c:"#f2b705",w:3.8,d:""},{c:"url(#fireg)",w:6,d:"",fire:1}];
 function routePts(a,b){const out=[],n=Math.max(2,Math.ceil(Math.abs(b-a)/6));for(let j=0;j<=n;j++){const p=posAt(a+(b-a)*j/n);out.push([p.x,p.y]);}return out;}
 function arcPt(p0,p1,h,u){const mx=(p0.x+p1.x)/2,my=(p0.y+p1.y)/2,dx=p1.x-p0.x,dy=p1.y-p0.y,L=Math.hypot(dx,dy)||1,cx=mx+dy/L*0-0,cy=my-L*h-12;
   const x=(1-u)*(1-u)*p0.x+2*(1-u)*u*mx+u*u*p1.x,y=(1-u)*(1-u)*p0.y+2*(1-u)*u*cy+u*u*p1.y;return{x,y};}
