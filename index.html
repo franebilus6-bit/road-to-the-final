@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Road to the Final</title>
+<title>Road to the Final – Daily Football Quiz</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
-<meta name="description" content="Daily football quiz: the rarer your answer, the further you travel to the Champions League final.">
+<meta name="description" content="Road to the Final is a free daily football quiz: 8 questions every day, and the rarer your answer, the further you travel across Europe, from scooter to SIUUU rocket. Play free, make leagues and beat your friends.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://roadtothefinal.org/">
 <meta property="og:site_name" content="Road to the Final">
@@ -19,6 +19,7 @@
 <meta name="twitter:description" content="8 football questions a day. The rarer your answer, the further you travel.">
 <meta name="twitter:image" content="https://roadtothefinal.org/og.jpg">
 <link rel="canonical" href="https://roadtothefinal.org/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Road to the Final","alternateName":["Road to the Final quiz","roadtothefinal"],"url":"https://roadtothefinal.org/","applicationCategory":"GameApplication","genre":["Quiz","Trivia","Football"],"operatingSystem":"Any (web browser)","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"description":"A free daily football quiz in the spirit of Pointless. Every day there are 8 questions about football players, clubs, managers, nations and stadiums. Common answers move you only a few kilometres; rare answers launch you across Europe toward the Champions League final in Madrid."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -252,6 +253,8 @@ body.dark #map{filter:brightness(.78) saturate(.9)}
 #winov .cupst{white-space:nowrap;font-family:var(--font-display);font-weight:800;font-size:min(5.6vw,30px);letter-spacing:1px;text-transform:uppercase;background:#d62828;border:3px solid #14213d;border-radius:10px;padding:2px 14px;margin-top:-6px;animation:cupup 1.4s .15s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes cupup{0%{transform:translateY(60vh) scale(.4) rotate(-20deg)}70%{transform:translateY(-4vh) scale(1.1) rotate(6deg)}100%{transform:none}}
 @keyframes winfade{from{opacity:0}}
+.about{max-width:1180px;margin:0 auto 24px;padding:0 16px;color:#fff}.about details{background:rgba(20,33,61,.55);border:2px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px}.about summary{cursor:pointer;font-weight:700}.about p{font-size:14px;line-height:1.5;opacity:.92}.about a{color:#ffd60a}
+body.playing .about{display:none}
 </style>
 </head>
 <body>
@@ -288,6 +291,15 @@ body.dark #map{filter:brightness(.78) saturate(.9)}
 
   </section>
 </main>
+<footer class="about">
+  <details>
+    <summary>About Road to the Final</summary>
+    <p><b>Road to the Final</b> is a free daily football quiz, a bit like Pointless. Every day at midnight there are 8 new questions about football: players, clubs, managers, national teams, years and stadiums. Name any correct answer you like, but the rarer it is, the further you travel.</p>
+    <p>A common answer moves you a few kilometres by scooter or night bus; a rare one sends you by private jet or a SIUUU rocket. Your journey runs across the grounds of Europe's champions, from the Emirates Stadium to the Champions League final in Madrid, and beyond to Lisbon.</p>
+    <p>Sign in with Google to get on the daily and weekly leaderboards, keep a streak, and create private leagues with your friends. One attempt per day, new questions every midnight.</p>
+    <p><a href="/privacy.html">Privacy</a></p>
+  </details>
+</footer>
 <script>
 "use strict";
 /* ---------- podaci: postaje ---------- */
