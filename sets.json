@@ -516,5 +516,178 @@
     "Olympiastadion (Berlin)": 1737856
    }
   }
+ ],
+ "2026-11-24": [
+  {
+   "type": "player",
+   "title": "Player who played for both Real Madrid and Manchester United",
+   "rule": "Competitive first-team games for both clubs, loans included.",
+   "a": {
+    "Laurie Cunningham": 547311,
+    "David Beckham": 27903808,
+    "Cristiano Ronaldo": 85085416,
+    "Ruud van Nistelrooy": 5652884,
+    "Gabriel Heinze": 1202979,
+    "Michael Owen": 7327750,
+    "Ángel Di María": 7342604,
+    "Javier Hernández": 4599722,
+    "Raphaël Varane": 3560445,
+    "Casemiro": 6929206,
+    "Sergio Reguilón": 1800957
+   }
+  },
+  {
+   "type": "coach",
+   "title": "Manager who won the Bundesliga since 2000",
+   "rule": "Title-winning head coaches from 1999/2000 to 2025/26.",
+   "a": {
+    "Ottmar Hitzfeld": 397302,
+    "Matthias Sammer": 839635,
+    "Felix Magath": 521476,
+    "Armin Veh": 53665,
+    "Louis van Gaal": 2857691,
+    "Jürgen Klopp": 10557532,
+    "Jupp Heynckes": 989331,
+    "Pep Guardiola": 15948138,
+    "Carlo Ancelotti": 12622773,
+    "Niko Kovač": 1227834,
+    "Hansi Flick": 4826608,
+    "Julian Nagelsmann": 4223179,
+    "Thomas Tuchel": 8328448,
+    "Xabi Alonso": 8961736,
+    "Vincent Kompany": 4850580
+   }
+  },
+  {
+   "type": "player",
+   "title": "Player who was a club teammate of both Zlatan Ibrahimović and Kylian Mbappé",
+   "rule": "Played for the same club first team as Zlatan in one season and as Mbappé in another (or the same) season.",
+   "a": {
+    "Thiago Silva": 5378499,
+    "Marquinhos": 2673602,
+    "Marco Verratti": 2093236,
+    "Edinson Cavani": 4525572,
+    "Ángel Di María": 7342604,
+    "Javier Pastore": 820851,
+    "Lucas Moura": 1454400,
+    "Adrien Rabiot": 2745308,
+    "Presnel Kimpembe": 1533670,
+    "Layvin Kurzawa": 721001,
+    "Thiago Motta": 2030849,
+    "Kevin Trapp": 852270,
+    "Alphonse Areola": 1585040,
+    "Christopher Nkunku": 3811871,
+    "Lionel Messi": 72708936,
+    "Gianluigi Buffon": 5816461,
+    "Dani Alves": 5728685,
+    "Ander Herrera": 1364313,
+    "Gianluigi Donnarumma": 4520250,
+    "Brahim Díaz": 4935622
+   }
+  },
+  {
+   "type": "player",
+   "title": "Player with 500+ competitive appearances for Barcelona",
+   "rule": "Official games in all competitions.",
+   "a": {
+    "Lionel Messi": 72708936,
+    "Xavi": 1999914,
+    "Sergio Busquets": 3784984,
+    "Andrés Iniesta": 5697014,
+    "Gerard Piqué": 10812482,
+    "Carles Puyol": 2343572,
+    "Migueli": 49828,
+    "Víctor Valdés": 1324247
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that hosted a World Cup",
+   "rule": "Every men's World Cup from 1930 to 2026, co-hosts included; West Germany counts as Germany.",
+   "a": {
+    "Uruguay": 5020822,
+    "Italy": 7469126,
+    "France": 12481809,
+    "Brazil": 14872978,
+    "Switzerland": 3398547,
+    "Sweden": 1882651,
+    "Chile": 1739506,
+    "England": 15542162,
+    "Mexico": 6067598,
+    "Germany": 10049029,
+    "Argentina": 17360569,
+    "Spain": 11605926,
+    "USA": 9000408,
+    "South Korea": 4522410,
+    "Japan": 5706153,
+    "South Africa": 2233824,
+    "Russia": 2001444,
+    "Qatar": 3350777,
+    "Canada": 4621902
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that has been champion of Germany",
+   "rule": "Bundesliga champions from 1963/64 to 2025/26.",
+   "a": {
+    "Bayern Munich": 15277923,
+    "Köln": 1421752,
+    "1860 Munich": 1279388,
+    "Werder Bremen": 1748167,
+    "Eintracht Braunschweig": 467433,
+    "Nuremberg": 935510,
+    "Borussia Mönchengladbach": 2549369,
+    "Hamburger SV": 2397346,
+    "Stuttgart": 2325014,
+    "Kaiserslautern": 1201759,
+    "Borussia Dortmund": 9390545,
+    "Wolfsburg": 1992799,
+    "Bayer Leverkusen": 7247889
+   }
+  },
+  {
+   "type": "player",
+   "title": "Golden Boy winner",
+   "rule": "Tuttosport's award for the best young player in Europe, 2003 to 2026.",
+   "a": {
+    "Rafael van der Vaart": 1318290,
+    "Wayne Rooney": 12213622,
+    "Lionel Messi": 72708936,
+    "Cesc Fàbregas": 5528991,
+    "Sergio Agüero": 6423124,
+    "Anderson": 969751,
+    "Alexandre Pato": 2272495,
+    "Mario Balotelli": 6651210,
+    "Mario Götze": 2627321,
+    "Isco": 2986495,
+    "Paul Pogba": 9139739,
+    "Raheem Sterling": 8727012,
+    "Anthony Martial": 4091567,
+    "Renato Sanches": 2089452,
+    "Kylian Mbappé": 39627548,
+    "Matthijs de Ligt": 3254413,
+    "João Félix": 6726512,
+    "Erling Haaland": 38315469,
+    "Pedri": 4815870,
+    "Gavi": 5330018,
+    "Jude Bellingham": 22901049,
+    "Lamine Yamal": 27181955,
+    "Désiré Doué": 2846691,
+    "Pau Cubarsí": 2384932
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year Barcelona won the European Cup or Champions League",
+   "rule": "Type the year of the final, e.g. 1999.",
+   "a": {
+    "1992": 324342,
+    "2006": 1463348,
+    "2009": 1067326,
+    "2011": 999454,
+    "2015": 923396
+   }
+  }
  ]
 }
