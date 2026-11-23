@@ -835,18 +835,31 @@ const READY=(async()=>{
   }catch(e){dbState="none";}
 })();
 /* private visit counter: one row per browser per day, write-only for the public (nobody can read it through the site) */
+/* where the visitor came from: ?s=tt style link tag, the app's in-app browser, or the referring site (no personal data) */
+const VISIT_SRC=(()=>{try{const u=new URL(location.href),q=(u.searchParams.get("s")||u.searchParams.get("utm_source")||"").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,20);
+  if(q){u.searchParams.delete("s");u.searchParams.delete("utm_source");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}
+  const map={tt:"tiktok",tiktok:"tiktok",ig:"instagram",insta:"instagram",instagram:"instagram",fb:"facebook",wa:"whatsapp",yt:"youtube"};
+  if(q)return map[q]||q;
+  const ua=navigator.userAgent||"";
+  if(/musical_ly|BytedanceWebview|TikTok/i.test(ua))return "tiktok";if(/Instagram/i.test(ua))return "instagram";if(/FBAN|FBAV|FB_IAB/i.test(ua))return "facebook";if(/Snapchat/i.test(ua))return "snapchat";
+  const r=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,"").replace(/^m\./,""):"";
+  if(!r||r===location.hostname)return "direct";
+  for(const [k,v] of [["tiktok","tiktok"],["instagram","instagram"],["facebook","facebook"],["google","google"],["bing","bing"],["duckduckgo","duckduckgo"],["t.co","x"],["twitter","x"],["x.com","x"],["reddit","reddit"],["youtube","youtube"],["whatsapp","whatsapp"],["claude.ai","claude"],["chatgpt","chatgpt"]])if(r.includes(k))return v;
+  return r.slice(0,40);}catch(e){return "direct";}})();
 async function logVisit(){try{const k=todayKey();if(store.get("rtf_vday","")===k)return;let v=store.get("rtf_vid","");if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2));store.set("rtf_vid",v);}
-  const {error}=await sb.from("visits").insert({day:k,vid:v},{returning:"minimal"});if(!error||error.code==="23505")store.set("rtf_vday",k);}catch(e){}}
+  const {error}=await sb.from("visits").insert({day:k,vid:v,src:VISIT_SRC},{returning:"minimal"});if(!error||error.code==="23505")store.set("rtf_vday",k);}catch(e){}}
 async function logPlay(k){try{if(!sb)return;let v=store.get("rtf_vid","");if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2));store.set("rtf_vid",v);}
   await sb.from("plays").insert({day:k,vid:v,signed:signedIn()});}catch(e){}}
 /* owner-only stats panel (the database refuses everyone else) */
 const ADMIN_ID="7ddaeb6f-6afd-4cc1-ac94-a47366ba6764";
 async function drawAdmin(){const el=document.getElementById("adm");if(!el)return;el.innerHTML=`<p class="rule">Loading…</p>`;
-  const [st,rp]=await Promise.all([sb.rpc("admin_stats",{p_days:14}),sb.rpc("admin_reports",{p_limit:30})]);
+  const [st,rp,sr]=await Promise.all([sb.rpc("admin_stats",{p_days:14}),sb.rpc("admin_reports",{p_limit:30}),sb.rpc("admin_sources",{p_days:14})]);
   if(st.error){el.innerHTML=`<p class="rule">Stats unavailable.</p>`;return;}
   const rows=st.data||[];
   el.innerHTML=`<table class="admt"><tr><th>Day</th><th>Visitors</th><th>Played</th><th>Guests</th><th>Signed in</th></tr>${rows.map(r=>`<tr><td>${String(r.day).slice(8,10)}.${String(r.day).slice(5,7)}.</td><td class="n">${r.visits}</td><td class="n">${r.plays}</td><td class="n">${r.guest_plays}</td><td class="n">${r.signed_plays}</td></tr>`).join("")}</table>
   <p class="rule" style="font-size:12px;margin:4px 0 10px">Visitors = devices that opened the site (counted from 22.11. 14:47). Played = finished games; guests counted from the update on 22.11. Signed in = results on the leaderboard.</p>
+  <div class="alabel">Where visitors came from (14 days)</div>${(sr.data||[]).length?`<table class="admt"><tr><th>Source</th><th>Today</th><th>14 days</th></tr>${sr.data.map(r=>`<tr><td>${esc(r.src)}</td><td class="n">${r.today}</td><td class="n">${r.visits}</td></tr>`).join("")}</table>`:`<p class="rule">No data yet.</p>`}
+  <p class="rule" style="font-size:12px;margin:4px 0 10px">Counted from 23.11. Tag your links: roadtothefinal.org/?s=tt (TikTok), ?s=ig (Instagram), ?s=wa (WhatsApp).</p>
   <div class="alabel">Reported answers</div>${(rp.data||[]).length?`<table class="admt">${rp.data.map(r=>`<tr><td>${String(r.day).slice(8,10)}.${String(r.day).slice(5,7)}.</td><td>${esc(r.title)}<br><b>${esc(r.answer)}</b></td><td class="n">${r.n}×</td></tr>`).join("")}</table>`:`<p class="rule">No reports.</p>`}`;}
 async function loadProfile(){
   const {data}=await sb.from("profiles").select("name").eq("id",ME.id).maybeSingle();PROFILE=data||null;
