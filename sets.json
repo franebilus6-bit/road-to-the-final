@@ -438,7 +438,7 @@
   {
    "type": "player",
    "title": "World Cup Golden Ball winner",
-   "rule": "Best player of the tournament, 1982 to 2022.",
+   "rule": "Best player of the tournament, 1982 to 2026.",
    "a": {
     "Paolo Rossi": 1222873,
     "Diego Maradona": 16528048,
@@ -449,7 +449,8 @@
     "Zinédine Zidane": 13868893,
     "Diego Forlán": 2868398,
     "Lionel Messi": 72708936,
-    "Luka Modrić": 12440344
+    "Luka Modrić": 12440344,
+    "Rodri": 7290375
    }
   },
   {
