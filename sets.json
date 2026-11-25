@@ -867,5 +867,156 @@
     "Beşiktaş Stadium": 387963
    }
   }
+ ],
+ "2026-11-26": [
+  {
+   "type": "coach",
+   "title": "Manager who won La Liga since 2000",
+   "rule": "Title-winning head coaches from 1999/2000 to 2025/26.",
+   "a": {
+    "Javier Irureta": 87953,
+    "Vicente del Bosque": 1204198,
+    "Rafael Benítez": 3194607,
+    "Frank Rijkaard": 2124218,
+    "Fabio Capello": 1707202,
+    "Bernd Schuster": 528491,
+    "Pep Guardiola": 15948138,
+    "José Mourinho": 15410684,
+    "Tito Vilanova": 828301,
+    "Diego Simeone": 4863084,
+    "Luis Enrique": 6657904,
+    "Zinédine Zidane": 13868893,
+    "Ernesto Valverde": 1384720,
+    "Carlo Ancelotti": 12622773,
+    "Xavi": 1999914,
+    "Hansi Flick": 4826608
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year a Champions League final went to penalties",
+   "rule": "Finals from 1993 to 2026 decided by a penalty shoot-out.",
+   "a": {
+    "1996": 376350,
+    "2001": 468375,
+    "2003": 569492,
+    "2005": 1705521,
+    "2008": 1163945,
+    "2012": 1126864,
+    "2016": 763128,
+    "2026": 1466059
+   }
+  },
+  {
+   "type": "stadium",
+   "title": "Stadium that hosted a match at Euro 2024",
+   "rule": "All ten venues of the tournament in Germany. Typing the city works too.",
+   "a": {
+    "Olympiastadion (Berlin)": 1737856,
+    "Allianz Arena": 1610088,
+    "Signal Iduna Park Dortmund": 1325278,
+    "Volksparkstadion": 538116,
+    "RheinEnergieStadion": 383123,
+    "Deutsche Bank Park Frankfurt": 844687,
+    "MHPArena Stuttgart": 461311,
+    "Merkur Spiel-Arena Düsseldorf": 470885,
+    "Veltins-Arena": 650656,
+    "Red Bull Arena Leipzig": 584942
+   }
+  },
+  {
+   "type": "player",
+   "title": "Serie A top scorer since 2010",
+   "rule": "Capocannoniere from 2009/10 to 2025/26, joint winners included.",
+   "a": {
+    "Antonio Di Natale": 793318,
+    "Zlatan Ibrahimović": 19909761,
+    "Edinson Cavani": 4525572,
+    "Ciro Immobile": 2295910,
+    "Mauro Icardi": 3318030,
+    "Luca Toni": 1187877,
+    "Gonzalo Higuaín": 3132103,
+    "Edin Džeko": 4461616,
+    "Fabio Quagliarella": 631709,
+    "Cristiano Ronaldo": 85085416,
+    "Victor Osimhen": 7032192,
+    "Lautaro Martínez": 4614901,
+    "Mateo Retegui": 1542851
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that hosted a European Championship",
+   "rule": "Hosts and co-hosts from 1960 to 2024, including the 11 hosts of Euro 2020; West Germany counts as Germany.",
+   "a": {
+    "France": 12481809,
+    "Spain": 11605926,
+    "Italy": 7469126,
+    "Belgium": 5371419,
+    "Yugoslavia": 919970,
+    "Germany": 10049029,
+    "England": 15542162,
+    "Netherlands": 7393955,
+    "Portugal": 10316924,
+    "Austria": 2191420,
+    "Switzerland": 3398547,
+    "Poland": 3101884,
+    "Ukraine": 1881391,
+    "Denmark": 2979464,
+    "Hungary": 2111318,
+    "Romania": 1787077,
+    "Scotland": 3590898,
+    "Azerbaijan": 668834,
+    "Russia": 2001444
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that has been champion of Spain",
+   "rule": "La Liga champions from 1929 to 2025/26.",
+   "a": {
+    "Real Madrid": 28891662,
+    "Barcelona": 26356375,
+    "Atlético Madrid": 8180077,
+    "Athletic Bilbao": 4404678,
+    "Valencia": 3642483,
+    "Real Sociedad": 3655077,
+    "Deportivo La Coruña": 2132592,
+    "Sevilla": 5008232,
+    "Real Betis": 3871811
+   }
+  },
+  {
+   "type": "player",
+   "title": "Euro Player of the Tournament",
+   "rule": "Official best player award from 1996 to 2024.",
+   "a": {
+    "Matthias Sammer": 839635,
+    "Zinédine Zidane": 13868893,
+    "Theodoros Zagorakis": 373969,
+    "Xavi": 1999914,
+    "Andrés Iniesta": 5697014,
+    "Antoine Griezmann": 8352524,
+    "Gianluigi Donnarumma": 4520250,
+    "Rodri": 7290375
+   }
+  },
+  {
+   "type": "player",
+   "title": "Bundesliga top scorer since 2010",
+   "rule": "Torjägerkanone winners from 2009/10 to 2025/26, joint winners included.",
+   "a": {
+    "Edin Džeko": 4461616,
+    "Mario Gómez": 1124420,
+    "Klaas-Jan Huntelaar": 1075008,
+    "Stefan Kießling": 232591,
+    "Robert Lewandowski": 15147457,
+    "Alexander Meier": 73079,
+    "Pierre-Emerick Aubameyang": 7715157,
+    "Niclas Füllkrug": 2152897,
+    "Christopher Nkunku": 3811871,
+    "Harry Kane": 24273104
+   }
+  }
  ]
 }
