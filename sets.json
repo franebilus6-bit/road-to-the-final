@@ -1018,5 +1018,164 @@
     "Harry Kane": 24273104
    }
   }
+ ],
+ "2026-11-27": [
+  {
+   "type": "coach",
+   "title": "Croatia head coach since 1990",
+   "rule": "Permanent head coaches of the national team, from 1990 to today.",
+   "a": {
+    "Dražan Jerković": 73765,
+    "Stanko Poklepović": 22050,
+    "Vlatko Marković": 28567,
+    "Miroslav Blažević": 217787,
+    "Mirko Jozić": 40857,
+    "Otto Barić": 43987,
+    "Zlatko Kranjčar": 90261,
+    "Slaven Bilić": 987122,
+    "Igor Štimac": 658236,
+    "Niko Kovač": 1227834,
+    "Ante Čačić": 83247,
+    "Zlatko Dalić": 690727
+   }
+  },
+  {
+   "type": "player",
+   "title": "Ballon d'Or top-three finisher since 2010",
+   "rule": "Finished 1st, 2nd or 3rd in the men's Ballon d'Or, 2010 to 2026 (no award in 2020).",
+   "a": {
+    "Lionel Messi": 72708936,
+    "Andrés Iniesta": 5697014,
+    "Xavi": 6500000,
+    "Cristiano Ronaldo": 85085416,
+    "Franck Ribéry": 3209889,
+    "Manuel Neuer": 5349253,
+    "Neymar": 26403550,
+    "Antoine Griezmann": 8352524,
+    "Luka Modrić": 12440344,
+    "Virgil van Dijk": 7770853,
+    "Robert Lewandowski": 15147457,
+    "Jorginho": 3937772,
+    "Karim Benzema": 13228782,
+    "Sadio Mané": 9085203,
+    "Kevin De Bruyne": 10088440,
+    "Erling Haaland": 38315469,
+    "Kylian Mbappé": 39627548,
+    "Rodri": 7290375,
+    "Vinícius Júnior": 10499485,
+    "Jude Bellingham": 22901049,
+    "Ousmane Dembélé": 8695560,
+    "Lamine Yamal": 27181955,
+    "Vitinha": 2248932,
+    "Harry Kane": 24273104
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that won the FA Cup since 2000",
+   "rule": "Winners of the finals from 2000 to 2026.",
+   "a": {
+    "Chelsea": 26566270,
+    "Liverpool": 26449840,
+    "Arsenal": 24736609,
+    "Manchester United": 34479376,
+    "Portsmouth": 2507358,
+    "Manchester City": 26274079,
+    "Wigan Athletic": 2250379,
+    "Leicester City": 8677352,
+    "Crystal Palace": 8618667
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that reached a World Cup semi-final since 1990",
+   "rule": "Semi-finalists from 1990 to 2026; West Germany counts as Germany.",
+   "a": {
+    "Argentina": 17360569,
+    "Germany": 10049029,
+    "Italy": 7469126,
+    "England": 15542162,
+    "Brazil": 14872978,
+    "Bulgaria": 1254588,
+    "France": 12481809,
+    "Croatia": 5411352,
+    "Netherlands": 7393955,
+    "Turkey": 2941536,
+    "South Korea": 4522410,
+    "Portugal": 10316924,
+    "Spain": 11605926,
+    "Uruguay": 5020822,
+    "Belgium": 5371419,
+    "Morocco": 6505302,
+    "Sweden": 1882651
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year Manchester City won the Premier League",
+   "rule": "Type the year the season ended, e.g. 2012 for 2011/12.",
+   "a": {
+    "2023": 30000000,
+    "2012": 20000000,
+    "2024": 12000000,
+    "2022": 10000000,
+    "2018": 6000000,
+    "2021": 5000000,
+    "2019": 3000000,
+    "2014": 1200000
+   }
+  },
+  {
+   "type": "stadium",
+   "title": "Stadium that hosted a match at the 2026 World Cup",
+   "rule": "All 16 venues in the USA, Canada and Mexico. Typing the city works too.",
+   "a": {
+    "MetLife Stadium New York": 4787971,
+    "SoFi Stadium Los Angeles": 6720691,
+    "AT&T Stadium Dallas": 2997413,
+    "Arrowhead Stadium Kansas City": 1869735,
+    "NRG Stadium Houston": 1603579,
+    "Mercedes-Benz Stadium Atlanta": 2348468,
+    "Lincoln Financial Field Philadelphia": 1489029,
+    "Lumen Field Seattle": 1826858,
+    "Levi's Stadium San Francisco": 2064367,
+    "Gillette Stadium Boston": 1954279,
+    "Hard Rock Stadium Miami": 2958403,
+    "BC Place Vancouver": 1130482,
+    "BMO Field Toronto": 1083469,
+    "Estadio Azteca": 2762820,
+    "Estadio Akron Guadalajara": 697432,
+    "Estadio BBVA Monterrey": 705286
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation Croatia beat in a World Cup knockout match",
+   "rule": "Round of 16 to third-place play-off, 1998 to 2026; wins on penalties count.",
+   "a": {
+    "Romania": 1787077,
+    "Germany": 10049029,
+    "Netherlands": 7393955,
+    "Denmark": 2979464,
+    "Russia": 2001444,
+    "England": 15542162,
+    "Japan": 5706153,
+    "Brazil": 14872978,
+    "Morocco": 6505302
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club Luka Modrić played for",
+   "rule": "Senior club career including loans, up to today.",
+   "a": {
+    "Dinamo Zagreb": 2041892,
+    "Zrinjski Mostar": 635254,
+    "Inter Zaprešić": 162343,
+    "Tottenham": 17865772,
+    "Real Madrid": 28891662,
+    "Milan": 6641248
+   }
+  }
  ]
 }
