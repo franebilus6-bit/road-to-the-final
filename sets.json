@@ -1081,7 +1081,7 @@
     "Manchester United": 34479376,
     "Portsmouth": 2507358,
     "Manchester City": 26274079,
-    "Wigan Athletic": 2250379,
+    "Wigan": 2250379,
     "Leicester City": 8677352,
     "Crystal Palace": 8618667
    }
@@ -1130,7 +1130,7 @@
    "title": "Stadium that hosted a match at the 2026 World Cup",
    "rule": "All 16 venues in the USA, Canada and Mexico. Typing the city works too.",
    "a": {
-    "MetLife Stadium New York": 4787971,
+    "MetLife Stadium": 4787971,
     "SoFi Stadium Los Angeles": 6720691,
     "AT&T Stadium Dallas": 2997413,
     "Arrowhead Stadium Kansas City": 1869735,
