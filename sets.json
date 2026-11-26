@@ -1022,21 +1022,17 @@
  "2026-11-27": [
   {
    "type": "coach",
-   "title": "Croatia head coach since 1990",
-   "rule": "Permanent head coaches of the national team, from 1990 to today.",
+   "title": "Manager who won Serie A since 2010",
+   "rule": "Title-winning head coaches from 2009/10 to 2025/26.",
    "a": {
-    "Dražan Jerković": 73765,
-    "Stanko Poklepović": 22050,
-    "Vlatko Marković": 28567,
-    "Miroslav Blažević": 217787,
-    "Mirko Jozić": 40857,
-    "Otto Barić": 43987,
-    "Zlatko Kranjčar": 90261,
-    "Slaven Bilić": 987122,
-    "Igor Štimac": 658236,
-    "Niko Kovač": 1227834,
-    "Ante Čačić": 83247,
-    "Zlatko Dalić": 690727
+    "José Mourinho": 15410684,
+    "Massimiliano Allegri": 1697688,
+    "Antonio Conte": 5254207,
+    "Maurizio Sarri": 1552264,
+    "Stefano Pioli": 1241407,
+    "Luciano Spalletti": 2162375,
+    "Simone Inzaghi": 3365094,
+    "Cristian Chivu": 1174587
    }
   },
   {
@@ -1083,7 +1079,8 @@
     "Manchester City": 26274079,
     "Wigan": 2250379,
     "Leicester City": 8677352,
-    "Crystal Palace": 8618667
+    "Crystal Palace": 8618667,
+    "Wigan Athletic": 2250379
    }
   },
   {
@@ -1166,15 +1163,21 @@
   },
   {
    "type": "club",
-   "title": "Club Luka Modrić played for",
-   "rule": "Senior club career including loans, up to today.",
+   "title": "Club that won the Copa del Rey since 2000",
+   "rule": "Winners of the finals from 2000 to 2026.",
    "a": {
-    "Dinamo Zagreb": 2041892,
-    "Zrinjski Mostar": 635254,
-    "Inter Zaprešić": 162343,
-    "Tottenham": 17865772,
+    "Espanyol": 2304989,
+    "Real Zaragoza": 1192802,
+    "Deportivo La Coruña": 2132592,
+    "Mallorca": 1741755,
+    "Real Betis": 3871811,
+    "Sevilla": 5008232,
+    "Valencia": 3642483,
+    "Barcelona": 26356375,
     "Real Madrid": 28891662,
-    "Milan": 6641248
+    "Atlético Madrid": 8180077,
+    "Real Sociedad": 3655077,
+    "Athletic Bilbao": 4404678
    }
   }
  ]
