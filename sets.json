@@ -1346,5 +1346,181 @@
     "DR Congo": 2389067
    }
   }
+ ],
+ "2026-11-29": [
+  {
+   "type": "player",
+   "title": "Player who played for both Bayern Munich and Borussia Dortmund",
+   "rule": "Played at least one competitive match for both first teams.",
+   "a": {
+    "Robert Lewandowski": 15147457,
+    "Mario Götze": 2627321,
+    "Mats Hummels": 2269686,
+    "Niklas Süle": 1327760,
+    "Raphaël Guerreiro": 1000427,
+    "Marcel Sabitzer": 2322301,
+    "Emre Can": 1887430,
+    "Sebastian Rode": 177734,
+    "Ivan Perišić": 3313349,
+    "Robert Kovač": 168726,
+    "Torsten Frings": 284069,
+    "Jürgen Kohler": 324671,
+    "Stefan Reuter": 300000,
+    "Thomas Helmer": 300000,
+    "Michael Rummenigge": 81830,
+    "Christian Nerlinger": 44878,
+    "Jürgen Wegmann": 9847,
+    "Toni Schumacher": 204115,
+    "Markus Feulner": 11263,
+    "Burkhard Segler": 1289
+   }
+  },
+  {
+   "type": "coach",
+   "title": "Chelsea manager since 2003",
+   "rule": "Permanent, interim and caretaker managers from 2003 to today.",
+   "a": {
+    "Claudio Ranieri": 2476291,
+    "José Mourinho": 15410684,
+    "Avram Grant": 720945,
+    "Luiz Felipe Scolari": 1135629,
+    "Guus Hiddink": 965149,
+    "Ray Wilkins": 686866,
+    "Carlo Ancelotti": 12622773,
+    "André Villas-Boas": 1664595,
+    "Roberto Di Matteo": 1199099,
+    "Rafael Benítez": 3194607,
+    "Steve Holland": 639257,
+    "Antonio Conte": 5254207,
+    "Maurizio Sarri": 1552264,
+    "Frank Lampard": 7733930,
+    "Thomas Tuchel": 8328448,
+    "Graham Potter": 4874232,
+    "Bruno Saltor": 38469,
+    "Mauricio Pochettino": 7169439,
+    "Enzo Maresca": 5273867,
+    "Calum McFarlane": 455195,
+    "Liam Rosenior": 3909014,
+    "Xabi Alonso": 8961736
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that won the FIFA Club World Cup",
+   "rule": "Every winner from 2000 to 2025.",
+   "a": {
+    "Corinthians": 2462086,
+    "São Paulo": 1935013,
+    "Internacional": 1327109,
+    "Milan": 6641248,
+    "Manchester United": 34479376,
+    "Barcelona": 26356375,
+    "Inter": 11623850,
+    "Bayern Munich": 15277923,
+    "Real Madrid": 28891662,
+    "Liverpool": 26449840,
+    "Chelsea": 26566270,
+    "Manchester City": 26274079
+   }
+  },
+  {
+   "type": "country",
+   "title": "Nation that won Olympic football gold since 1984",
+   "rule": "Men's tournament winners, 1984 to 2024.",
+   "a": {
+    "France": 12481809,
+    "Spain": 11605926,
+    "Nigeria": 3138739,
+    "Cameroon": 2476649,
+    "Argentina": 17360569,
+    "Mexico": 6067598,
+    "Brazil": 14872978,
+    "Soviet Union": 751708
+   }
+  },
+  {
+   "type": "year",
+   "title": "Year Real Madrid won La Liga since 2000",
+   "rule": "Type the year the season ended, e.g. 2001 for 2000/01.",
+   "a": {
+    "2001": 213198,
+    "2003": 276083,
+    "2007": 360846,
+    "2008": 307343,
+    "2012": 712293,
+    "2017": 496184,
+    "2020": 505754,
+    "2022": 1600906,
+    "2024": 2018955
+   }
+  },
+  {
+   "type": "stadium",
+   "title": "Home stadium of a Premier League club in 2026/27",
+   "rule": "All 20 grounds this season.",
+   "a": {
+    "Emirates Stadium": 1882905,
+    "Villa Park": 1058778,
+    "Vitality Stadium": 655810,
+    "Gtech Community Stadium": 927326,
+    "Amex Stadium": 837410,
+    "Stamford Bridge Chelsea": 2061593,
+    "Selhurst Park": 985365,
+    "Hill Dickinson Stadium": 767465,
+    "Craven Cottage Fulham": 982867,
+    "Elland Road Leeds": 738610,
+    "Anfield Liverpool": 2294465,
+    "Etihad Stadium": 2280015,
+    "Old Trafford Manchester United": 2518312,
+    "St James' Park Newcastle": 1099650,
+    "City Ground Nottingham Forest": 813797,
+    "Stadium of Light Sunderland": 842792,
+    "Tottenham Hotspur Stadium": 2671801,
+    "Coventry Building Society Arena Coventry": 804321,
+    "Portman Road": 464301,
+    "MKM Stadium Hull": 392592,
+    "Hill Dickinson Stadium Everton": 767465
+   }
+  },
+  {
+   "type": "player",
+   "title": "Croatian player who played for Real Madrid or Barcelona",
+   "rule": "Signed for either club's first team.",
+   "a": {
+    "Luka Modrić": 12440344,
+    "Ivan Rakitić": 2139195,
+    "Mateo Kovačić": 3145127,
+    "Davor Šuker": 1564032,
+    "Robert Prosinečki": 689064,
+    "Robert Jarni": 100000,
+    "Alen Halilović": 577218,
+    "Igor Jovićević": 144554
+   }
+  },
+  {
+   "type": "club",
+   "title": "Club that won the Copa Libertadores since 2000",
+   "rule": "Winners from 2000 to 2026.",
+   "a": {
+    "Boca Juniors": 3135707,
+    "Olimpia": 563916,
+    "Once Caldas": 245283,
+    "São Paulo": 1935013,
+    "Internacional": 1327109,
+    "LDU Quito": 383846,
+    "Estudiantes": 841880,
+    "Santos": 3469460,
+    "Corinthians": 2462086,
+    "Atlético Mineiro": 1858711,
+    "San Lorenzo": 909094,
+    "River Plate": 2916061,
+    "Atlético Nacional": 1140125,
+    "Grêmio": 1272105,
+    "Flamengo": 2134308,
+    "Palmeiras": 1476926,
+    "Fluminense": 2528779,
+    "Botafogo": 1903975
+   }
+  }
  ]
 }
