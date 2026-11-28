@@ -634,7 +634,7 @@ function ask(){
   clearTimeout(autoNext);document.body.classList.toggle("playing",true);document.body.classList.toggle("done",false);
   const c=CATS[idx],t=TYPE[c.type],yr=c.type==="year";
   const rk=rocketsUsed();
-  stage.innerHTML=`<div class="eyebrow">Question ${idx+1} of ${CATS.length}<span class="rkt${rk>=MAXR?" full":""}">🚀 ${rk}/${MAXR}</span></div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
+  stage.innerHTML=`<div class="eyebrow">${ARCH?`Archive #${ARCH.n+1} · `:""}Question ${idx+1} of ${CATS.length}<span class="rkt${rk>=MAXR?" full":""}">🚀 ${rk}/${MAXR}</span></div><h2>${esc(c.title)}</h2><p class="rule">${esc(c.rule)}</p>
   <div class="timer" id="timer"><span id="tlabel">Read</span><div class="tbar"><i id="tfill"></i></div><b id="tnum">5</b></div>
   <form id="f" autocomplete="off"><input id="answer" type="${yr?"number":"text"}" ${yr?'inputmode="numeric" min="1930" max="2026"':'autocapitalize="words" spellcheck="false"'} placeholder="${t.ph}" aria-label="${t.ph}"><button type="submit" id="send">Check</button></form>
   <div class="msg" id="msg"></div><div id="picks"></div>
@@ -683,8 +683,8 @@ const rocketsUsed=()=>log.filter(x=>x.ti===6).length;
 let SAME=null;
 async function loadSame(){if(!sb)return;try{const {data}=await sb.from("results").select("user_id,log").eq("day",GAME_KEY||todayKey()).limit(5000);SAME=(data||[]).filter(r=>!(ME&&r.user_id===ME.id)).map(r=>r.log||[]);}catch(e){}}
 function sameText(title,label){if(!SAME)return "";const ans=SAME.map(l=>l.find(e=>e&&e.t===title)).filter(Boolean);
-  if(ans.length<3)return ans.some(e=>e.l===label)?"👥 Someone else said this too.":"🦄 Nobody else has said this today.";
-  const n=ans.filter(e=>e.l===label).length;if(!n)return "🦄 Nobody else has said this today.";
+  if(ans.length<3)return ans.some(e=>e.l===label)?"👥 Someone else said this too.":`🦄 Nobody else has said this ${ARCH?"that day":"today"}.`;
+  const n=ans.filter(e=>e.l===label).length;if(!n)return `🦄 Nobody else has said this ${ARCH?"that day":"today"}.`;
   const p=Math.round(n/ans.length*100);return `👥 <b>${p<1?"<1":p}%</b> of players said the same.`;}
 function lock(name,label,why){
   stopTimer();
@@ -717,6 +717,19 @@ function finish(){
   setTimeout(renderStats,0);
   clearTimeout(autoNext);document.body.classList.toggle("playing",false);document.body.classList.toggle("done",true);
   const wasRanked=ranked;if(ranked){saveRanked(true);ranked=false;}
+  if(ARCH){const A=ARCH,dd=dayKeyOf(A.n).split("-"),r=reached(total),t=ST[r],done=total>=FINISH;
+    stage.innerHTML=`<div class="eyebrow">Archive · set #${A.n+1} · ${+dd[2]}.${+dd[1]}.${dd[0]}.</div><h2>${esc(t.end)}</h2>
+    <div class="row" style="justify-content:flex-start;gap:14px"><div class="plus">${total}<span style="font-size:22px"> km</span></div><span class="chip" style="background:${done?"var(--red)":"var(--ink)"}">${done?"Final reached":esc(t.n+", "+t.g)}</span></div>
+    <table>${log.map(x=>`<tr><td>${esc(x.title)}<br><b>${esc(x.label)}</b>${x.ok?" · "+esc(x.tr):""}</td><td class="n" style="color:${x.ok&&!x.r?"var(--grass)":"var(--red)"}">${x.r?"💥 back to 0":x.km+" km"}</td></tr>`).join("")}</table>
+    <p class="rule" style="margin-top:8px">Archive game, just for fun: not saved and not on any leaderboard.</p>
+    <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="aback">📅 Past days</button><button type="button" class="ghost" id="replay">▶ Replay route</button><button type="button" class="ghost" id="bestbtn">SIUUU answers</button><button type="button" class="ghost" id="atoday">Today's quiz</button></div>`;
+    const rl=log.map(x=>x.km),rt=log.map(x=>x.ti);
+    document.getElementById("replay").onclick=()=>replayRoute(rl,rt);
+    document.getElementById("bestbtn").onclick=()=>best();
+    document.getElementById("aback").onclick=()=>leaveArchive(()=>pastList(A.back));
+    document.getElementById("atoday").onclick=()=>leaveArchive(intro);
+    clearTimeout(replayT);replayT=setTimeout(()=>replayRoute(rl,rt),1800);
+    return;}
   const r=reached(total),t=ST[r],done=total>=FINISH;
   const line=`Road to the Final #${dayNo()+1}: ${total} km, ${done?"reached the final in Madrid"+(total>FINISH?" and "+(total-FINISH)+" km beyond":""):"stopped at "+t.n}. ${log.filter(x=>x.ok).length}/8 correct.`;
   stage.innerHTML=`<div class="eyebrow">End of the road</div><h2>${esc(t.end)}</h2>
@@ -748,10 +761,13 @@ function replayRoute(kms,tiers){
 /* ---------- past days: view only ---------- */
 function dayKeyOf(n){const d=new Date(DAY0);d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function setForDay(n){const r=REMOTE_SETS[dayKeyOf(n)];return (Array.isArray(r)&&r.length===8&&r)||SETS[n]||SETS[((n%SETS.length)+SETS.length)%SETS.length];}
+/* archive: replay an earlier set just for fun; nothing is saved and no leaderboard changes */
+function playArchive(n,back){clearTimeout(replayT);stopTimer();ranked=false;ARCH={n,back};GAME_KEY=dayKeyOf(n);CATS=setForDay(n);idx=0;total=0;log=[];SAME=null;vehicle(0);hideAll();clearTrails();travel(0,0);loadSame();ask();}
+function leaveArchive(to){ARCH=null;GAME_KEY=null;SAME=null;clearTimeout(replayT);stopTimer();idx=0;total=0;log=[];vehicle(0);clearTrails();travel(0,0);pickDaily();to();}
 function pastList(back){
   clearTimeout(replayT);document.body.classList.toggle("done",true);
   const t=dayNo(),hist=store.get("rtf_hist",{}),days=[];for(let n=t;n>=0&&days.length<30;n--){const k=dayKeyOf(n);if(n===t&&!hist[k])continue;days.push(n);}
-  stage.innerHTML=`<div class="eyebrow">Past days</div><h2>Earlier sets</h2><p class="rule">Look back at any earlier day: its leaderboard, your result and the SIUUU answers. Past days can't be played.</p>
+  stage.innerHTML=`<div class="eyebrow">Past days</div><h2>Earlier sets</h2><p class="rule">Look back at any earlier day or play its set again. Archive games are just for fun and don't count on any leaderboard.</p>
   ${days.length?`<table class="pastt">${days.map(n=>{const k=dayKeyOf(n),h=hist[k],dd=k.split("-");return `<tr data-n="${n}"><td><b>#${n+1}</b> · ${+dd[2]}.${+dd[1]}.${dd[0]}.</td><td class="n">${h?`${h.km} km · ${h.correct}/8`:"<span style='opacity:.6'>not played</span>"}</td><td class="n">›</td></tr>`;}).join("")}</table>`:`<p class="rule">No earlier days yet.</p>`}
   <div class="row"><span></span><button type="button" class="ghost" id="pback">Back</button></div>`;
   document.getElementById("pback").onclick=back;
@@ -763,7 +779,8 @@ async function pastDay(n,back){
   stage.innerHTML=`<div class="eyebrow">Daily set #${n+1} · ${+dd[2]}.${+dd[1]}.${dd[0]}.</div><h2>${h?`You made ${h.km} km`:"You didn't play this day"}</h2>
   ${h?`<p class="rule">${h.correct}/8 correct${h.km>=FINISH?" · reached the final 🏆":""}</p>`:""}
   <div class="eyebrow sub">Leaderboard that day</div><div id="pboard"><p class="rule">Loading…</p></div>
-  <div class="row" style="flex-wrap:wrap;gap:8px">${h&&h.log?`<button type="button" class="ghost" id="preplay">▶ Replay route</button>`:""}<button type="button" class="ghost" id="pbest">SIUUU answers</button><button type="button" class="ghost" id="pback2">All days</button></div>`;
+  <div class="row" style="flex-wrap:wrap;gap:8px"><button type="button" id="pplay">▶ Play this set</button>${h&&h.log?`<button type="button" class="ghost" id="preplay">▶ Replay route</button>`:""}<button type="button" class="ghost" id="pbest">SIUUU answers</button><button type="button" class="ghost" id="pback2">All days</button></div>`;
+  document.getElementById("pplay").onclick=()=>playArchive(n,back);
   document.getElementById("pback2").onclick=()=>pastList(back);
   const pr=document.getElementById("preplay");if(pr)pr.onclick=()=>replayRoute(h.log.map(x=>x.k),h.log.map(x=>x.ti));
   document.getElementById("pbest").onclick=()=>{const keep=CATS;CATS=set;best({mine:(h&&h.log||[]).map(x=>x&&{label:x.l,km:x.k}),back:()=>{CATS=keep;pastDay(n,back);},total:h?h.km:0});};
@@ -805,7 +822,7 @@ const DAY0=new Date(2026,10,20);
 const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const dayNo=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((m-DAY0)/864e5);};
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
-let ranked=false,GAME_KEY=null,GAME_DAY=null;
+let ranked=false,GAME_KEY=null,GAME_DAY=null,ARCH=null;
 const PAGE_DAY=todayKey();
 /* a running game in one tab must not be locked by another tab; a reload mid-game still ends the attempt */
 let liveT=0;
@@ -1099,7 +1116,7 @@ function intro(){
   b.onclick=()=>{if(todayKey()!==PAGE_DAY){location.reload();return;}const all=store.get("rtf_hist",{}),k=todayKey();ranked=!all[k];if(ranked){GAME_KEY=k;GAME_DAY=dayNo()+1;all[k]={km:0,correct:0,answered:0,done:false,day:GAME_DAY,at:Date.now()};store.set("rtf_hist",all);liveOn();pushScore(k);loadSame();}ask();};
   b.focus({preventScroll:true});
 }
-function restart(){if(ranked){saveRanked(false);ranked=false;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();clearTrails();travel(0,0);intro();}
+function restart(){if(ranked){saveRanked(false);ranked=false;}if(ARCH){ARCH=null;GAME_KEY=null;SAME=null;}stopTimer();idx=0;total=0;log=[];vehicle(0);hideAll();clearTrails();travel(0,0);intro();}
 function markSet(){document.querySelectorAll(".sets button[data-s]").forEach(b=>b.classList.toggle("on",SETS[+b.dataset.s]===CATS));}
 
 document.querySelectorAll(".sets button[data-s]").forEach(b=>b.onclick=()=>{CATS=SETS[+b.dataset.s];markSet();restart();});
